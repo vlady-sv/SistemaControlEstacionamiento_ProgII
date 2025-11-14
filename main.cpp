@@ -1,14 +1,13 @@
-#include <iostream>
 #include <windows.h>
-#include "Vehiculo.h"
+#include "Espacio.h"
 #define CADMIN "0123"
 #define CAPAGAR "0000"
-using namespace std;
 
 void usuario();
 void administrador(bool &valido);
 bool apagar();
 bool verificar4Digits(const string codigo);
+bool verificarFormatoPlaca(const string placa);
 
 int main(){
     cout << CADMIN;
