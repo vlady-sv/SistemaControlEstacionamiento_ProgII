@@ -1,5 +1,6 @@
 #include <iostream>
 #include <windows.h>
+#include "Vehiculo.h"
 #define CADMIN "0123"
 #define CAPAGAR "0000"
 using namespace std;
@@ -7,6 +8,7 @@ using namespace std;
 void usuario();
 void administrador(bool &valido);
 bool apagar();
+bool verificar4Digits(const string codigo);
 
 int main(){
     cout << CADMIN;
@@ -24,7 +26,7 @@ int main(){
         }while(opc != 1 && opc != 2);
 
         switch(opc){
-            case 1: cout << "U";//usuario();
+            case 1: cout << "U";//Llamada a metodo de usuario();
                 break;
             case 2: administrador(valido);
                 break;
@@ -37,6 +39,7 @@ int main(){
 }
 
 void usuario(){
+    Vehiculo* v;
     int tipoVehiculo;
     bool auxVe = true, formato = false;
     string placa, vehiculo;
@@ -49,15 +52,15 @@ void usuario(){
 
         switch(tipoVehiculo){
             case 1:
-                vehiculo = "Auto";
+                v->setTipo("Auto");
                 auxVe=false;
                 break;
             case 2:
-                vehiculo = "Moto";
+                v->setTipo("Moto");
                 auxVe=false;
                 break;
             case 3:
-                vehiculo = "Camioneta";
+                v->setTipo("Camioneta");
                 auxVe=false;
                 break;
             default: cout << u8"\n\n\t Opción inválida";
@@ -69,22 +72,28 @@ void usuario(){
     do{
         cout << "\n\t ====> FORMATO DE LA PLACA <====";
         cout << "\n\t\t ";
-        cout << u8"\n\t Ingresa el número de la placa de tu vehículo: ";
+        cout << u8"\n\t Ingresa el número de la placa de tu vehículo en el formato solicitado: ";
         cin.ignore();
         cin >> placa;
+        //Implementacion para validar formato
+        v->setPlaca(placa);
     }while(formato == false);
 
     //Implementacion de llamada a espacio
+    
 }
 
 void administrador(bool &valido){
     string codigo;
     int cont = 0;
-    bool correcta = false;
-    do{
-        cout << u8"\n\t Ingresa el código de administrador: ";
-        cin >> codigo;
-        cout << CADMIN;
+    bool correcta = false, digits4 = false;
+    do{ 
+        do{
+            cout << u8"\n\t Ingresa el código de administrador (4 números): ";
+            cin >> codigo;
+            digits4 = verificar4Digits(codigo); //Verficación de número con 4 dígitos
+        }while(!digits4);
+
         if(codigo == CADMIN) correcta = true;
 
         if(codigo != CADMIN){
@@ -111,7 +120,7 @@ void administrador(bool &valido){
         cin >> opc;
 
         switch(opc){
-            case 1: cout << "Administrar"; ///////////////Agregar opcion de administrar
+            case 1: cout << "Administrar"; ///////////////Agregar opciones de administracion
                 break;
             case 2:{
                 char resp;
@@ -133,9 +142,13 @@ void administrador(bool &valido){
 bool apagar(){
     string code;
     int cont;
+    bool digits4;
     do{
-        cout << u8"\n\t Ingresa el código para apagar el equipo: ";
-        cin >> code;
+        do{
+            cout << u8"\n\t Ingresa el código para apagar el equipo (4 números): ";
+            cin >> code;
+            digits4 = verificar4Digits(code);
+        }while(!digits4);
 
         if(code == CAPAGAR) return true;
         else{
@@ -149,4 +162,24 @@ bool apagar(){
     }while(cont < 3);
 
     return false;
+}
+
+/*-------------------------- VERIFICAR LA INSERCIÓN DE 4 NÚMEROS (ADMIN. O APAGADO) -------------------*/
+
+bool verificar4Digits(const string codigo){
+    if(codigo.length() != 4){
+        return false;
+    }else{
+        bool esValido = true;
+        for(char c : codigo){
+            if(!isdigit(c)){
+                esValido = false;
+                break;
+            }
+        }
+
+        if(!esValido) return false;
+    }
+
+    return true;
 }

@@ -2,6 +2,7 @@
 #define CONVENIO_H
 #include <iostream>
 #include <string>
+#include <windows.h>
 using namespace std;
 
 // Clase base 
@@ -33,7 +34,7 @@ public:
         if (descuento >= 0 && descuento <= 100)
             porcentajeDescuento = descuento;
         else
-            cout << "Descuento inválido. Debe estar entre 0% y 100%.\n";
+            cout << u8"Descuento inválido. Debe estar entre 0% y 100%.\n";
     }
 
   
