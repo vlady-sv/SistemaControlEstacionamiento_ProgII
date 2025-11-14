@@ -4,12 +4,11 @@
 #include <string>
 using namespace std;
 
-// Clase base Convenio
+// Clase base 
 class Convenio {
 protected:
     string nombreEmpresa;
-    double porcentajeDescuento; 
-    const double tarifaHora = 80.0; 
+    double porcentajeDescuento;
 
 public:
   
@@ -23,10 +22,6 @@ public:
 
     double getPorcentajeDescuento() const {
         return porcentajeDescuento;
-    }
-
-    double getTarifaHora() const {
-        return tarifaHora;
     }
 
 
@@ -43,41 +38,31 @@ public:
 
   
     virtual double calcularDescuento(double horas) {
-        double total = horas * tarifaHora;
-        double descuento = total * (porcentajeDescuento / 100.0);
-        return total - descuento;
+        return 0; 
     }
 
-    void mostrarDescuento(double horas) {
-        double total = horas * tarifaHora;
-        double totalConDescuento = calcularDescuento(horas);
-
+    virtual void mostrarDescuento(double horas) {
         cout << "\nEmpresa: " << nombreEmpresa << endl;
-        cout << "Horas estacionado: " << horas << endl;
-        cout << "Tarifa por hora: $" << tarifaHora << endl;
-        cout << "Total sin descuento: $" << total << endl;
-        cout << "Descuento aplicado: " << porcentajeDescuento << "%" << endl;
-        cout << "Total con descuento: $" << totalConDescuento << endl;
-        cout << "------------------------------------\n";
     }
 
     virtual ~Convenio() {}
 };
 
-//clases derivadas
-class motorsA : public Convenio {
+// Clases derivadas
+class MexaBank : public Convenio {
 public:
-    motorsA() : Convenio("MotoresJalisco", 10.0) {} 
+    MexaBank() : Convenio("Mexabank", 10.0) {} 
 };
 
-class llamtas : public Convenio {
+class Sis : public Convenio {
 public:
-    llamtas() : Convenio("LlantasAguascalientes", 15.0) {} 
+    Sis() : Convenio("Secretaría de Innovación Social", 15.0) {} 
 };
 
-class rimes : public Convenio {
+class Seguro : public Convenio {
 public:
-    rimes() : Convenio("RinesBallarta", 25.0) {}
+    Seguro() : Convenio("Seguros Automotrices", 25.0) {}
 };
 
 #endif // CONVENIO_H
+
