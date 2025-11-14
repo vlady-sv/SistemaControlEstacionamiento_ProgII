@@ -4,7 +4,7 @@
 #include <iostream>
 using namespace std;
 
-class Vehiculo {
+class Vehiculo{
     protected:
         string placa;
         string tipo;
@@ -26,31 +26,40 @@ class Vehiculo {
         string getTipo() const{
             return tipo;
         }
-//ESTE METODO MOSTRAR NO ES NECESARIO, FUE PARA PROBAR PROGRAMA ASI QUE SE PUEDE COMENTAR DE SER NECESARIO
-        void mostrarInfo() const{
-            cout << "Placa: " << placa << endl;
-            cout << "Tipo: " << tipo << endl;
-        }
+
+        //metodo mostrar puro
+        virtual void mostrarInfo() const = 0;
+
+        //destructor virtual
+        virtual ~Vehiculo() = default;
 };
-//---------------------------------------------------------------------------------------------------------------------------------------------------------------------------------------------------------------------------------------------
-//clases derivadas Auto, Moto, Camioneta
+
+//-------------------------------------------------------------------------------------------------------------------------------------------------------------------------------------------
+//clases derivadas
 
 class Auto : public Vehiculo{
     public:
         Auto(){
             tipo = "Auto";
         }
-
         Auto(string p) : Vehiculo(p, "Auto") {}
+
+       
+        void mostrarInfo() const override{
+            cout << "[AUTO] Placa: " << placa << " | Tipo: " << tipo << endl;
+        }
 };
 
-class Moto : public Vehiculo{
+class Moto : public Vehiculo {
     public:
         Moto(){
             tipo = "Moto";
         }
-
         Moto(string p) : Vehiculo(p, "Moto") {}
+
+        void mostrarInfo() const override{
+            cout << "[MOTO] Placa: " << placa << " | Tipo: " << tipo << endl;
+        }
 };
 
 class Camioneta : public Vehiculo{
@@ -58,8 +67,11 @@ class Camioneta : public Vehiculo{
         Camioneta(){
             tipo = "Camioneta";
         }
-
         Camioneta(string p) : Vehiculo(p, "Camioneta") {}
+
+        void mostrarInfo() const override{
+            cout << "[CAMIONETA] Placa: " << placa << " | Tipo: " << tipo << endl;
+        }
 };
 
 #endif //VEHICULO_VEHICULO_H
