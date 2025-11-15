@@ -12,13 +12,18 @@ using tiempo = steady_clock::time_point;
 
 class Espacio{
     private:
+        int numEspacio;
         Vehiculo* v;
         Convenio conv;
         tiempo llegada = reloj::now();
         tiempo salida = reloj::now();
-        int tarifa; //Ver si tarifa se hace como una clase mas o se maneja directo
+        //tiempo duracion = duration_cast<minutes>(salida - llegada);         //////////////Obtener duracion - pasar a parte de Ticket
+        string tarifa;
 
     public:
+        Espacio(int, Vehiculo*, Convenio, string);
+        Espacio(Espacio const &);
+
 };
 
 

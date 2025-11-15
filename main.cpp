@@ -1,13 +1,26 @@
 #include <windows.h>
+#include <algorithm>
 #include "Espacio.h"
+
+/*CODIGOS DE VERIFICACION EN ORDEN:
+ADMNISTRADOR, APAGAR SISTEMA, CONVENIO MEXABANK, CONVENIO SECRETARIA DE INNOVACIÓN SOCIAL, CONVENIO EMPRESA DE SEGUROS*/
 #define CADMIN "0123"
 #define CAPAGAR "0000"
+#define MEXABANK "3578"
+#define SIS "1598"
+#define SEGURO "6482"
+
+//Prototipos
 
 void usuario();
 void administrador(bool &valido);
 bool apagar();
+bool validarPlaca(const string);
 bool verificar4Digits(const string codigo);
 bool verificarFormatoPlaca(const string placa);
+bool codeConvenio(Convenio &);
+
+// Menú principal
 
 int main(){
     cout << CADMIN;
@@ -25,7 +38,7 @@ int main(){
         }while(opc != 1 && opc != 2);
 
         switch(opc){
-            case 1: cout << "U";//Llamada a metodo de usuario();
+            case 1: usuario();
                 break;
             case 2: administrador(valido);
                 break;
@@ -36,6 +49,8 @@ int main(){
 
     return 0;
 }
+
+/* ======================== OPCIONES PARA MOSTRAR AL USUARIO ======================= */
 
 void usuario(){
     Vehiculo* v;
@@ -68,19 +83,80 @@ void usuario(){
         
     }while(auxVe);
 
+    /* ----------- LLENAR EL ESPACIO EN EL ESTACIONAMIENTO ---------------- */
+
+    //Verificar si hay espacios disponbles correspondientes al tipo de vehiculo, sino darle gracias al usuario y terminar el proceso de registro
+
     do{
         cout << "\n\t ====> FORMATO DE LA PLACA <====";
         cout << "\n\t\t ";
         cout << u8"\n\t Ingresa el número de la placa de tu vehículo en el formato solicitado: ";
         cin.ignore();
         cin >> placa;
+        transform(placa.begin(), placa.end(), placa.begin(), ::toupper); //Ponerlo todo en mayusculas, en caso de que no este
         //Implementacion para validar formato
-        v->setPlaca(placa);
-    }while(formato == false);
+        formato  = validarPlaca(placa);
+    }while(!formato);
+    v->setPlaca(placa);
 
-    //Implementacion de llamada a espacio
+    /* ------------- ELECCIÓN DE LA TARIFA DE PAGO ----------------*/
+    int selTarifa;
+    string tarifa;
+    bool selec = false;
+    do{
+        cout << "\n\t ====> TARIFAS <====";
+        cout << "\n\n\t [1] Por Horas (15 min. de tolerancia por hora)";
+        cout << u8"\n\t [2] Por día (24 horas completas de pago)";
+        cout << u8"\n\t [3] Pensión (Pago por un mes completo)"; ///////////////////////////////Verificar si era por mes o por semana
+        cout << "\n\n\t Elige la tarifa que se adapte a tus necesidades: ";
+        cin >> selTarifa;
+
+        switch(selTarifa){
+            case 1:
+                tarifa = "horas";
+                selec = true;
+                break;
+            case 2:
+                tarifa = "dia";
+                selec = true;
+                break;
+            case 3:
+                tarifa = "pension";
+                selec = true;
+                break;
+        }
+    }while(!selec);
+
+    /* ---------- VERIFICAR CONVENIO CON EMPRESA ---------- */
+    int resp;
+    bool conv;
+    do{
+        cout << u8"\n\t Tienes un código de convenio de empresa?";
+        cout << u8"\n\n\t [1] Sí";
+        cout << u8"\n\t [2] No";
+        cin >> resp;
+
+        switch(resp){
+            case 1:
+                conv = true;
+                break;
+            case 2: conv = false;
+                break;
+            default: cout << u8"\n\t Respuesta inválida";
+                break;
+        }
+    }while(resp != 1 && resp != 2);
+
+    Convenio conve;
+    if(conv){
+       codeConvenio(conve); 
+    }
+
+    Espacio(0, v, conve, tarifa); //Falta la parte de el numero de espacio y logica para que numeros seran destinados a que vehiculos
     
 }
+
+/* ======================== ADMINISTRACIÓN DEL SISTEMA ======================= */
 
 void administrador(bool &valido){
     string codigo;
@@ -119,7 +195,7 @@ void administrador(bool &valido){
         cin >> opc;
 
         switch(opc){
-            case 1: cout << "Administrar"; ///////////////Agregar opciones de administracion
+            case 1: cout << "Administrar"; ///////////////Agregar opciones de administracion (Implementación en archivo.h)
                 break;
             case 2:{
                 char resp;
@@ -181,4 +257,48 @@ bool verificar4Digits(const string codigo){
     }
 
     return true;
+}
+
+/*-------------------------- INGRESAR CODIGO DE CONVENIO -------------------*/
+
+bool codeConvenio(Convenio &conve){
+    string code;
+    bool verifyCode = false, digits4 = false;
+    int cont = 0;
+    do{
+        do{
+            cout << u8"Ingresa el código de convenio (4 números): ";
+            cin >> code;
+            digits4 = verificar4Digits(code); //Verficación de número con 4 dígitos
+        }while(!digits4);
+        
+        if(code == MEXABANK){
+            conve = MexaBank();
+            verifyCode = true;
+            return;
+        }else if(code == SIS){
+            conve = Sis();
+            verifyCode = true;
+            return;
+        }else if(code == SEGURO){
+            conve = Seguro();
+            verifyCode = true;
+            return;
+        }else{
+            ++cont;
+        }
+    }while(!verifyCode && cont != 3);
+
+    cout << u8"\n\t Intentos de registro de código agotados (3 intentos)";
+    return;
+}
+
+/*-------------------------- VERIFICAR FORMATO CORRECTO DE PLACA -------------------*/
+
+bool validarPlaca(const string placa){
+    //Formato cumplido
+    return true;
+
+    //Formato no cumplido
+    return false;
 }

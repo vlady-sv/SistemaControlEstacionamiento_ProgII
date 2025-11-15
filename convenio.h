@@ -12,6 +12,8 @@ protected:
     double porcentajeDescuento;
 
 public:
+
+    Convenio() : nombreEmpresa(""), porcentajeDescuento(0.0) {}
   
     Convenio(string nombre, double descuento)
         : nombreEmpresa(nombre), porcentajeDescuento(descuento) {}
