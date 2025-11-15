@@ -18,7 +18,7 @@ bool apagar();
 bool validarPlaca(const string);
 bool verificar4Digits(const string codigo);
 bool verificarFormatoPlaca(const string placa);
-bool codeConvenio(Convenio &);
+bool codeConvenio(Convenio*);
 
 // Menú principal
 
@@ -147,7 +147,7 @@ void usuario(){
         }
     }while(resp != 1 && resp != 2);
 
-    Convenio conve;
+    Convenio* conve;
     if(conv){
        codeConvenio(conve); 
     }
