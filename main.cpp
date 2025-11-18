@@ -88,13 +88,12 @@ void usuario(){
     //Verificar si hay espacios disponbles correspondientes al tipo de vehiculo, sino darle gracias al usuario y terminar el proceso de registro
 
     do{
-        cout << "\n\t ====> FORMATO DE LA PLACA <====";
-        cout << "\n\t\t ";
+        cout << "\n\t\t ====> FORMATO DE LA PLACA <====";
+        cout << "\n\t 'AAA-000-A' (Los guiones tambien deben ingresarse)";
         cout << u8"\n\t Ingresa el número de la placa de tu vehículo en el formato solicitado: ";
         cin.ignore();
         cin >> placa;
-        transform(placa.begin(), placa.end(), placa.begin(), ::toupper); //Ponerlo todo en mayusculas, en caso de que no este
-        //Implementacion para validar formato
+        transform(placa.begin(), placa.end(), placa.begin(), ::toupper); //Ponerlo todo en mayusculas, en caso de que no lo este
         formato  = validarPlaca(placa);
     }while(!formato);
     v->setPlaca(placa);
@@ -275,30 +274,42 @@ bool codeConvenio(Convenio &conve){
         if(code == MEXABANK){
             conve = MexaBank();
             verifyCode = true;
-            return;
+            return true;
         }else if(code == SIS){
             conve = Sis();
             verifyCode = true;
-            return;
+            return true;
         }else if(code == SEGURO){
             conve = Seguro();
             verifyCode = true;
-            return;
+            return true;
         }else{
             ++cont;
         }
     }while(!verifyCode && cont != 3);
 
     cout << u8"\n\t Intentos de registro de código agotados (3 intentos)";
-    return;
+    return false;
 }
 
 /*-------------------------- VERIFICAR FORMATO CORRECTO DE PLACA -------------------*/
 
 bool validarPlaca(const string placa){
-    //Formato cumplido
-    return true;
+    //Verificar longitud de la cadena
+    if(placa.length() == 9){
+        //Verificar cada digito del formato "AAA-000-A"
+        if(!(!isdigit(placa[0]))) return false;
+        if(!(!isdigit(placa[1]))) return false;
+        if(!(!isdigit(placa[2]))) return false;
+        if(placa[3] != '-') return false;
+        if(!isdigit(placa[4])) return false;
+        if(!isdigit(placa[5])) return false;
+        if(!isdigit(placa[6])) return false;
+        if(!(!isdigit(placa[7]))) return false;
 
+        //Formato cumplido
+        return true;    
+    }
     //Formato no cumplido
     return false;
 }
