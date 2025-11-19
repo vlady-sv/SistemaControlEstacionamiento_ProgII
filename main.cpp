@@ -290,14 +290,14 @@ bool validarPlaca(const string placa){
     //Verificar longitud de la cadena
     if(placa.length() == 9){
         //Verificar cada digito del formato "AAA-000-A"
-        if(!(!isdigit(placa[0]))) return false;
-        if(!(!isdigit(placa[1]))) return false;
-        if(!(!isdigit(placa[2]))) return false;
+        if(placa[0] < 'A' || placa[0] > 'Z') return false;
+        if(placa[1] < 'A' || placa[1] > 'Z') return false;
+        if(placa[2] < 'A' || placa[2] > 'Z') return false;
         if(placa[3] != '-') return false;
         if(!isdigit(placa[4])) return false;
         if(!isdigit(placa[5])) return false;
         if(!isdigit(placa[6])) return false;
-        if(!(!isdigit(placa[7]))) return false;
+        if(placa[7] < 'A' || placa[7] > 'Z') return false;
 
         //Formato cumplido
         return true;    
