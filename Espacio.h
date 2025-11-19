@@ -36,6 +36,7 @@ class Espacio{
         tiempo get_salida();
         string get_tarifa();
         void mostrarEspacio();
+        ~Espacio();
 
 };
 
@@ -109,5 +110,9 @@ void Espacio::mostrarEspacio(){
     //Mostrar hora de llegada    
 }
 
+Espacio::~Espacio(){
+    delete v;
+    delete conv;
+}
 
 #endif 

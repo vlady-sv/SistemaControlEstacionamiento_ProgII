@@ -18,13 +18,11 @@ bool apagar();
 bool validarPlaca(const string);
 bool verificar4Digits(const string codigo);
 bool verificarFormatoPlaca(const string placa);
-bool codeConvenio(Convenio*);
+Convenio* codeConvenio();
 
 // Menú principal
 
 int main(){
-    cout << CADMIN;
-    cout << CAPAGAR;
     SetConsoleOutputCP(CP_UTF8);
     int opc;
     bool valido = false;
@@ -66,15 +64,15 @@ void usuario(){
 
         switch(tipoVehiculo){
             case 1:
-                v->setTipo("Auto");
+                v = new Auto();
                 auxVe=false;
                 break;
             case 2:
-                v->setTipo("Moto");
+                v = new Moto();
                 auxVe=false;
                 break;
             case 3:
-                v->setTipo("Camioneta");
+                v = new Camioneta();
                 auxVe=false;
                 break;
             default: cout << u8"\n\n\t Opción inválida";
@@ -146,9 +144,9 @@ void usuario(){
         }
     }while(resp != 1 && resp != 2);
 
-    Convenio* conve;
+    Convenio* conve = nullptr;
     if(conv){
-       codeConvenio(conve); 
+       conve = codeConvenio(); 
     }
 
     Espacio(0, v, conve, tarifa); //Falta la parte de el numero de espacio y logica para que numeros seran destinados a que vehiculos
@@ -201,7 +199,7 @@ void administrador(bool &valido){
                 do{
                     cout << "\n\t Regresar a la pantalla principal? s/n: ";
                     cin >> resp; 
-                }while(resp != 's' || resp != 'S' || resp != 'n' || resp != 'N');
+                }while(resp != 's' && resp != 'S' && resp != 'n' && resp != 'N');
                 if(resp == 's' || resp == 'S') return;
                 break;
                 }
@@ -260,9 +258,9 @@ bool verificar4Digits(const string codigo){
 
 /*-------------------------- INGRESAR CODIGO DE CONVENIO -------------------*/
 
-bool codeConvenio(Convenio &conve){
+Convenio* codeConvenio(){
     string code;
-    bool verifyCode = false, digits4 = false;
+    bool digits4 = false;
     int cont = 0;
     do{
         do{
@@ -272,24 +270,18 @@ bool codeConvenio(Convenio &conve){
         }while(!digits4);
         
         if(code == MEXABANK){
-            conve = MexaBank();
-            verifyCode = true;
-            return true;
+            return new MexaBank();
         }else if(code == SIS){
-            conve = Sis();
-            verifyCode = true;
-            return true;
+            return new Sis();
         }else if(code == SEGURO){
-            conve = Seguro();
-            verifyCode = true;
-            return true;
+            return new Seguro();
         }else{
             ++cont;
         }
-    }while(!verifyCode && cont != 3);
+    }while(cont != 3);
 
     cout << u8"\n\t Intentos de registro de código agotados (3 intentos)";
-    return false;
+    return nullptr;
 }
 
 /*-------------------------- VERIFICAR FORMATO CORRECTO DE PLACA -------------------*/
