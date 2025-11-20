@@ -46,7 +46,7 @@ class Auto : public Vehiculo{
 
        
         void mostrarInfo() const override{
-            cout << "[AUTO] Placa: " << placa << " | Tipo: " << tipo << endl;
+            cout << "Placa: " << placa << " | Tipo: " << tipo << endl;
         }
 };
 
@@ -58,7 +58,7 @@ class Moto : public Vehiculo {
         Moto(string p) : Vehiculo(p, "Moto") {}
 
         void mostrarInfo() const override{
-            cout << "[MOTO] Placa: " << placa << " | Tipo: " << tipo << endl;
+            cout << "Placa: " << placa << " | Tipo: " << tipo << endl;
         }
 };
 
@@ -70,7 +70,7 @@ class Camioneta : public Vehiculo{
         Camioneta(string p) : Vehiculo(p, "Camioneta") {}
 
         void mostrarInfo() const override{
-            cout << "[CAMIONETA] Placa: " << placa << " | Tipo: " << tipo << endl;
+            cout << "Placa: " << placa << " | Tipo: " << tipo << endl;
         }
 };
 
