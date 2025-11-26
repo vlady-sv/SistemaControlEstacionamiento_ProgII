@@ -1,6 +1,8 @@
 #include <windows.h>
 #include <algorithm>
 #include "Espacio.h"
+#include "verificar.h"
+#include "ManageArchivos.h"
 
 /*CODIGOS DE VERIFICACION EN ORDEN:
 ADMNISTRADOR, APAGAR SISTEMA, CONVENIO MEXABANK, CONVENIO SECRETARIA DE INNOVACIÓN SOCIAL, CONVENIO EMPRESA DE SEGUROS*/
@@ -9,6 +11,12 @@ ADMNISTRADOR, APAGAR SISTEMA, CONVENIO MEXABANK, CONVENIO SECRETARIA DE INNOVACI
 #define MEXABANK "3578"
 #define SIS "1598"
 #define SEGURO "6482"
+
+/* MAXIMA CAPACIDAD DE ALOJO POR VEHICULO*/
+
+#define AUTOS 500
+#define CAMIONETAS 500
+#define MOTOS 500
 
 //Prototipos
 
@@ -24,10 +32,24 @@ Convenio* codeConvenio();
 
 int main(){
     SetConsoleOutputCP(CP_UTF8);
-    int opc;
+    int opc, cAutos, cCamionetas, cMotos;
     bool valido = false;
 
+    if(!verificarCascarones()){
+        if(CrearArchivos() == 1){
+            cascaronesCreados();
+        }else{
+            cout << "\n\t Fallo al crear el cascaron.";
+            return 0;
+        }
+    }
+
+
     do{
+        //Obtener cantidad de lugares ocupados
+        cAutos =  contAutos();
+        cCamionetas = contCamionetas();
+        cMotos = contMotos();
         do{
             cout << u8"\n\t [1] Ingresar al estacionamiento";
             cout << u8"\n\t [2] Administrador";
