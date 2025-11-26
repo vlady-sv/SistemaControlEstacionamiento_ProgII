@@ -1,6 +1,5 @@
 #ifndef ESPACIO_H
 #define ESPACIO_H
-#include <iostream>
 #include <cstdlib>
 #include <chrono>
 #include "Vehiculo.h"
@@ -15,8 +14,9 @@ class Espacio{
         int numEspacio;
         Vehiculo* v;
         Convenio* conv;
-        tiempo llegada = reloj::now();
-        tiempo salida = reloj::now();
+        tiempo llegada;
+        tiempo salida;
+        tiempo duracion;
         //tiempo duracion = duration_cast<minutes>(salida - llegada);         //////////////Obtener duracion - pasar a parte de Ticket
         string tarifa;
 

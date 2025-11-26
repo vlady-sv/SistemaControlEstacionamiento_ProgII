@@ -1,7 +1,7 @@
-//CLASE TICKET, PROTOTIPO
+//CLASE - TICKET DE SALIDA
 
-#ifndef TICKET_H
-#define TICKET_H
+#ifndef TICKETENTRADA_H
+#define TICKETENTRADA_H
 
 #include <iostream>
 #include <ctime>
@@ -10,17 +10,15 @@
 
 using namespace std;
 
-class Ticket{
+class TicketEntrada{
     private:
         Vehiculo* vehiculo;
         time_t horaEntrada;
         time_t horaSalida;
-        int numeroEspacio;
-        double totalPagar;
-        bool activo;
+        int folio;
 
     public:
-        Ticket(Vehiculo* v = nullptr, int espacio = -1){
+        TicketEntrada(Vehiculo* v = nullptr, int espacio = -1){
             vehiculo = v;
             numeroEspacio = espacio;
             horaEntrada = time(nullptr);

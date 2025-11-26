@@ -21,6 +21,7 @@ ADMNISTRADOR, APAGAR SISTEMA, CONVENIO MEXABANK, CONVENIO SECRETARIA DE INNOVACI
 //Prototipos
 
 void usuario();
+void salir();
 void administrador(bool &valido);
 bool apagar();
 bool validarPlaca(const string);
@@ -51,8 +52,9 @@ int main(){
         cCamionetas = contCamionetas();
         cMotos = contMotos();
         do{
-            cout << u8"\n\t [1] Ingresar al estacionamiento";
-            cout << u8"\n\t [2] Administrador";
+            cout << "\n\t [1] Ingresar al estacionamiento";
+            cout << "\n\t [2] Salir del estacionamiento";
+            cout << "\n\t [3] Administrador";
             cout << u8"\n\n\t Elige una opción: ";
             cin >> opc;
         }while(opc != 1 && opc != 2);
@@ -60,7 +62,9 @@ int main(){
         switch(opc){
             case 1: usuario();
                 break;
-            case 2: administrador(valido);
+            case 2: salir();
+                break;
+            case 3: administrador(valido);
                 break;
             default: cout << u8"\n\tOpción inválida\n";
                 break;
@@ -107,9 +111,33 @@ void usuario(){
     }while(auxVe);
 
     /* ----------- LLENAR EL ESPACIO EN EL ESTACIONAMIENTO ---------------- */
+    int cAutos, cCamionetas, cMotos;
 
-    //Verificar si hay espacios disponbles correspondientes al tipo de vehiculo, sino darle gracias al usuario y terminar el proceso de registro
+    if(tipoVehiculo == 1){
+        cAutos = contAutos();
+        if(cAutos == AUTOS){
+            cout << u8"\n\t Lo sentimos, el estacionamiento se encuentra lleno.";
+            cout << u8"\n\t Por favor, dé la vuelta. Gracias por su visita.";
+            return;
+        }
+    }else if(tipoVehiculo == 2){
+        cCamionetas = contCamionetas();
+        if(cCamionetas == CAMIONETAS){
+            cout << u8"\n\t Lo sentimos, el estacionamiento se encuentra lleno.";
+            cout << u8"\n\t Por favor, dé la vuelta. Gracias por su visita.";
+            return;
+        }
+    }else{
+        cMotos = contMotos();
+        if(cMotos == MOTOS){
+            cout << u8"\n\t Lo sentimos, el estacionamiento se encuentra lleno.";
+            cout << u8"\n\t Por favor, dé la vuelta. Gracias por su visita.";
+            return;
+        }
+    }
 
+
+    /* INGRESAR LA PLACA DEL AUTO Y VERIFICAR EL FORMATO CORRECTO DE LA MISMAA*/
     do{
         cout << "\n\t\t ====> FORMATO DE LA PLACA <====";
         if(!moto) cout << "\n\t 'AAA-000-A' (Los guiones tambien deben ingresarse)";
@@ -175,7 +203,18 @@ void usuario(){
        conve = codeConvenio(); 
     }
 
-    Espacio(0, v, conve, tarifa); //Falta la parte de el numero de espacio y logica para que numeros seran destinados a que vehiculos
+    if(tipoVehiculo == 1){
+        actualizarAutos(cAutos);
+    }else if(tipoVehiculo == 2){
+        actualizarCamionetas(cCamionetas);
+    }else{
+        actualizarMotos(cMotos);
+    }
+
+    //Guardar todo en el espacio de estacionamiento
+    Espacio e(0, v, conve, tarifa); //Falta la parte de el numero de espacio y logica para que numeros seran destinados a que vehiculos
+
+    //Mostrarle al usuario su ticket de ingreso y especificarle que necesita su folio para salir
     
 }
 
@@ -235,6 +274,15 @@ void administrador(bool &valido){
                 break;
         }
     }while(valido == false);
+}
+
+void salir(){
+    string folio;
+    cout << u8"\n\t Ingresa el número de folio de tu ticket.";
+    cin.ignore();
+    getline(cin, folio);
+
+    // Implementar logica para buscar el espacio segun el folio del ticket //
 }
 
 bool apagar(){
