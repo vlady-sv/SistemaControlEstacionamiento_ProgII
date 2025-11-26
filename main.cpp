@@ -17,7 +17,7 @@ void administrador(bool &valido);
 bool apagar();
 bool validarPlaca(const string);
 bool verificar4Digits(const string codigo);
-bool verificarFormatoPlaca(const string placa);
+bool verificarFormatoPlaca(const string placa, bool moto);
 Convenio* codeConvenio();
 
 // Menú principal
@@ -53,7 +53,7 @@ int main(){
 void usuario(){
     Vehiculo* v;
     int tipoVehiculo;
-    bool auxVe = true, formato = false;
+    bool auxVe = true, formato = false, moto;
     string placa, vehiculo;
     do{
         cout << "\n\t [1] Auto";
@@ -66,14 +66,17 @@ void usuario(){
             case 1:
                 v = new Auto();
                 auxVe=false;
+                moto = false;
                 break;
             case 2:
                 v = new Moto();
                 auxVe=false;
+                moto = true;
                 break;
             case 3:
                 v = new Camioneta();
                 auxVe=false;
+                moto = false;
                 break;
             default: cout << u8"\n\n\t Opción inválida";
                 break;
@@ -87,12 +90,13 @@ void usuario(){
 
     do{
         cout << "\n\t\t ====> FORMATO DE LA PLACA <====";
-        cout << "\n\t 'AAA-000-A' (Los guiones tambien deben ingresarse)";
+        if(!moto) cout << "\n\t 'AAA-000-A' (Los guiones tambien deben ingresarse)";
+        else cout << "\n\t '00AAA0' (Sin guiones)";
         cout << u8"\n\t Ingresa el número de la placa de tu vehículo en el formato solicitado: ";
         cin.ignore();
         cin >> placa;
         transform(placa.begin(), placa.end(), placa.begin(), ::toupper); //Ponerlo todo en mayusculas, en caso de que no lo este
-        formato  = validarPlaca(placa);
+        formato  = validarPlaca(placa, moto);
     }while(!formato);
     v->setPlaca(placa);
 
@@ -286,21 +290,39 @@ Convenio* codeConvenio(){
 
 /*-------------------------- VERIFICAR FORMATO CORRECTO DE PLACA -------------------*/
 
-bool validarPlaca(const string placa){
+bool validarPlaca(const string placa, bool moto){
     //Verificar longitud de la cadena
-    if(placa.length() == 9){
-        //Verificar cada digito del formato "AAA-000-A"
-        if(placa[0] < 'A' || placa[0] > 'Z') return false;
-        if(placa[1] < 'A' || placa[1] > 'Z') return false;
-        if(placa[2] < 'A' || placa[2] > 'Z') return false;
-        if(placa[3] != '-') return false;
-        if(!isdigit(placa[4])) return false;
-        if(!isdigit(placa[5])) return false;
-        if(!isdigit(placa[6])) return false;
-        if(placa[7] < 'A' || placa[7] > 'Z') return false;
 
-        //Formato cumplido
-        return true;    
+    //Si el vehiculo es un auto
+    if(!moto){
+        if(placa.length() == 9){
+            //Verificar cada digito del formato "AAA-000-A"
+            if(placa[0] < 'A' || placa[0] > 'Z') return false;
+            if(placa[1] < 'A' || placa[1] > 'Z') return false;
+            if(placa[2] < 'A' || placa[2] > 'Z') return false;
+            if(placa[3] != '-') return false;
+            if(!isdigit(placa[4])) return false;
+            if(!isdigit(placa[5])) return false;
+            if(!isdigit(placa[6])) return false;
+            if(placa[7] < 'A' || placa[7] > 'Z') return false;
+
+            //Formato cumplido
+            return true;    
+        }
+    }else{
+        //Si el vehiculo es una moto
+        if(placa.length() == 6){
+            //Verificar cada digito del formato "00AAA0"
+            if(placa[0] < 'A' || placa[0] > 'Z') return false;
+            if(placa[1] < 'A' || placa[1] > 'Z') return false;
+            if(!isdigit(placa[2])) return false;
+            if(!isdigit(placa[3])) return false;
+            if(!isdigit(placa[4])) return false;
+            if(placa[5] < 'A' || placa[7] > 'Z') return false;
+
+            //Formato cumplido
+            return true;    
+        }
     }
     //Formato no cumplido
     return false;
