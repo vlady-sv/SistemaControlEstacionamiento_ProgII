@@ -14,8 +14,9 @@ int CrearArchivos(){
         return -1;
     }
     Vehiculo* v = new Auto();
-    Espacio blanco(0, v, c, "");
-    for(int i=0; i<500; i++){
+    Espacio blanco;
+    for(int i=1; i<500; i++){
+        blanco = Espacio(i, 0, v, c, "", false);
         archivo.write(reinterpret_cast<char*>(&blanco), sizeof(Espacio));
     }
     archivo.close();
@@ -28,8 +29,8 @@ int CrearArchivos(){
         return -1;
     }
     v = new Camioneta();
-    Espacio blanco(0, v, c, "");
-    for(int i=0; i<500; i++){
+    for(int i=501; i<=1000; i++){
+        blanco = Espacio(i, 0, v, c, "", false);
         archivo.write(reinterpret_cast<char*>(&blanco), sizeof(Espacio));
     }
     archivo.close();
@@ -41,8 +42,8 @@ int CrearArchivos(){
         return -1;
     }
     v = new Moto();
-    Espacio blanco(0, v, c, "");
-    for(int i=0; i<500; i++){
+    for(int i=1001; i<=1500; i++){
+        blanco = Espacio(i, 0, v, c, "", false);
         archivo.write(reinterpret_cast<char*>(&blanco), sizeof(Espacio));
     }
     archivo.close();
@@ -172,4 +173,29 @@ bool actualizarMotos(int cMotos){
     archivo.close();
 
     return true;
+}
+
+int leer_folios(){
+    int folio;
+    fstream archivo;
+    archivo.open("folios.dat", ios::binary|ios::in);
+    if(!archivo){
+        cout << "\n\t Lo sentimos hubo un fallo en el sistema [FOLIOS].";
+    }
+    archivo.seekg(ios::end);
+    archivo.read(reinterpret_cast<char*>(&folio), sizeof(int));
+    archivo.close();
+    
+    return folio;
+}
+
+void actualizar_folios(int folio){
+    fstream archivo;
+    archivo.open("folios.dat", ios::binary|ios::in|ios::out);
+    if(!archivo){
+         cout << "\n\t Lo sentimos hubo un fallo en el sistema [FOLIOS].";
+    }
+    archivo.seekp(ios::end);
+    archivo.write(reinterpret_cast<char*>(&folio), sizeof(int));
+    archivo.close();
 }

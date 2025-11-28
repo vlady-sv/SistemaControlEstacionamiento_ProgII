@@ -52,3 +52,9 @@ void cascaronesCreados(){
     val.write(reinterpret_cast<char*>(&moto), sizeof(int));
     val.close();
 }
+
+
+/*VERIFICACIONES*/
+bool verificarFolio(){
+    
+}

@@ -13,10 +13,10 @@ ADMNISTRADOR, APAGAR SISTEMA, CONVENIO MEXABANK, CONVENIO SECRETARIA DE INNOVACI
 #define SEGURO "6482"
 
 /* MAXIMA CAPACIDAD DE ALOJO POR VEHICULO*/
-
-#define AUTOS 500
-#define CAMIONETAS 500
-#define MOTOS 500
+ 
+#define AUTOS 500  /* Cajones de estacionamiento del 1-500 */
+#define CAMIONETAS 500 /*Cajones de estacionamiento del 501-1000*/
+#define MOTOS 500  /*Cajones de estacionamiento del 1001-1500*/
 
 //Prototipos
 
@@ -110,7 +110,9 @@ void usuario(){
         
     }while(auxVe);
 
-    /* ----------- LLENAR EL ESPACIO EN EL ESTACIONAMIENTO ---------------- */
+    /* ----------- LLENAR LOS DATOS PARA EL ESPACIO EN EL ESTACIONAMIENTO ---------------- */
+
+    //Verificar que haya espacio suficiente dependiendo del tipo de vehiculo del usuario
     int cAutos, cCamionetas, cMotos;
 
     if(tipoVehiculo == 1){
@@ -120,6 +122,7 @@ void usuario(){
             cout << u8"\n\t Por favor, dé la vuelta. Gracias por su visita.";
             return;
         }
+        ++cAutos;
     }else if(tipoVehiculo == 2){
         cCamionetas = contCamionetas();
         if(cCamionetas == CAMIONETAS){
@@ -127,6 +130,7 @@ void usuario(){
             cout << u8"\n\t Por favor, dé la vuelta. Gracias por su visita.";
             return;
         }
+        ++cCamionetas;
     }else{
         cMotos = contMotos();
         if(cMotos == MOTOS){
@@ -134,6 +138,7 @@ void usuario(){
             cout << u8"\n\t Por favor, dé la vuelta. Gracias por su visita.";
             return;
         }
+        ++cMotos;
     }
 
 
@@ -203,19 +208,115 @@ void usuario(){
        conve = codeConvenio(); 
     }
 
+    //Actualizar la cantidad de lugares ocupados para vehiculos
+    string tVehiculo;
     if(tipoVehiculo == 1){
         actualizarAutos(cAutos);
+        tVehiculo = "autos"; //Usado para saber que archivo de estacionamiento hay que abrir
     }else if(tipoVehiculo == 2){
         actualizarCamionetas(cCamionetas);
+        tVehiculo = "camionetas";
     }else{
         actualizarMotos(cMotos);
+        tVehiculo = "motos";
     }
 
     //Guardar todo en el espacio de estacionamiento
-    Espacio e(0, v, conve, tarifa); //Falta la parte de el numero de espacio y logica para que numeros seran destinados a que vehiculos
+
+    fstream archivo;
+    Espacio aux;
+    tVehiculo = tVehiculo + ".dat";
+    archivo.open(tVehiculo, ios::binary|ios::in|ios::out);
+    if(!archivo){
+        cout << "\n\t Lo sentimos ha ocurrido un error en el sistema.";
+    }
+    archivo.seekg(ios::beg);
+    while(!archivo.eof()){
+        archivo.read(reinterpret_cast<char*>(&aux), sizeof(Espacio));
+        if(!aux.get_ocupado()) break; //Si el cajon de estacionamiento se encuentra vacio se ocupa ese lugar
+    }
+
+    int numEspacio = aux.get_numEspacio();
+    int folio = leer_folios() + 1;
+    Espacio e(numEspacio, folio, v, conve, tarifa, true); //Guarda todos los datos en una variable de espacio para posteriormente registrarla
+
+    if(tipoVehiculo == 1){
+        archivo.seekp((numEspacio-1));
+        archivo.write(reinterpret_cast<char*>(&e), sizeof(Espacio));
+    }else if(tipoVehiculo == 2){
+        archivo.seekp((numEspacio-501));
+        archivo.write(reinterpret_cast<char*>(&e), sizeof(Espacio));
+    }else{
+        archivo.seekp((numEspacio-1001));
+        archivo.write(reinterpret_cast<char*>(&e), sizeof(Espacio));
+    }
+
+    archivo.close();
 
     //Mostrarle al usuario su ticket de ingreso y especificarle que necesita su folio para salir
+
     
+}
+
+void salir(){
+    int opcion, folio;
+    bool siEsta = false;
+    fstream archivo;
+    Espacio e, blanco;
+
+    do{
+        cout << "\n---------------------------------------------------\n";
+        cout << u8"\n\t ---> MENÚ <---";
+        cout << u8"\n\t [1] Ingresar el número de folio del ticket.";
+        cout << u8"\n\t [2] Ticket o folio perdido.";
+        cout << u8"\n\n\t Elige una opción: ";
+
+        if(opcion == 2){
+            cout << u8"\n\t Por favor, dirijase a la oficina de ayuda del estacionamiento.";
+            return;
+        }
+        do{
+            cout << u8"\n\t Ingrese el número de folio del ticket.";
+            cin >> folio;
+            if(!verificarFolio()) cout << u8"\n\t Por favor, ingrese un número de folio válido.";
+        }while(!verificarFolio());
+
+        string tVehiculo;
+        if(folio / 100000 == 1){
+            tVehiculo = "autos.dat";
+        }else if(folio / 100000 == 2){
+            tVehiculo = "camionetas.dat";
+        }else{
+            tVehiculo = "motos.dat";
+        }
+        
+        
+        // Implementar logica para buscar el espacio segun el folio del ticket //
+        archivo.open(tVehiculo, ios::binary|ios::in|ios::out);
+        if(!archivo){
+            cout << "\n\t Lo sentimos, ha ocurrido un error en el sistema [ESTACIONAMIENTO ESPACIOS].";
+        }
+        archivo.seekg(ios::beg);
+        while(archivo.eof()){
+            archivo.read(reinterpret_cast<char*>(&e), sizeof(Espacio));
+            if(e.get_folio() == folio){
+                siEsta = true;
+                break;
+            }
+        }
+
+        if(!siEsta){
+            cout << "\n\t Lo sentimos el folio no se ha encontrado, intente ingresarlo nuevamente.";
+        }else{
+            //Implementar logica para mostrar ticket de cobro
+
+            blanco = Espacio(e.get_numEspacio(), 0, nullptr, nullptr, "", false);
+            //archivo.seekp()
+        }
+
+
+    }while(!siEsta);
+
 }
 
 /* ======================== ADMINISTRACIÓN DEL SISTEMA ======================= */
@@ -274,15 +375,6 @@ void administrador(bool &valido){
                 break;
         }
     }while(valido == false);
-}
-
-void salir(){
-    string folio;
-    cout << u8"\n\t Ingresa el número de folio de tu ticket.";
-    cin.ignore();
-    getline(cin, folio);
-
-    // Implementar logica para buscar el espacio segun el folio del ticket //
 }
 
 bool apagar(){
