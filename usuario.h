@@ -55,7 +55,7 @@ void usuario(){
     int cAutos, cMotos, cCamiones;
 
     if(tipoVehiculo == 1){
-        cAutos = contAutos(false);
+        cAutos = contAutos(0);
         if(cAutos == AUTOS){
             cout << u8"\n\t Lo sentimos, el estacionamiento se encuentra lleno.";
             cout << u8"\n\t Por favor, dé la vuelta. Gracias por su visita.";
@@ -63,7 +63,7 @@ void usuario(){
         }
         ++cAutos;
     }else if(tipoVehiculo == 2){
-        cMotos = contMotos(false);
+        cMotos = contMotos(0);
         if(cMotos == MOTOS){
             cout << u8"\n\t Lo sentimos, el estacionamiento se encuentra lleno.";
             cout << u8"\n\t Por favor, dé la vuelta. Gracias por su visita.";
@@ -71,7 +71,7 @@ void usuario(){
         }
         ++cMotos;
     }else{
-        cCamiones = contCamiones(false);
+        cCamiones = contCamiones(0);
         if(cCamiones == CAMIONES){
             cout << u8"\n\t Lo sentimos, el estacionamiento se encuentra lleno.";
             cout << u8"\n\t Por favor, dé la vuelta. Gracias por su visita.";

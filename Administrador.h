@@ -1,4 +1,4 @@
-//  Administrador.h 
+/* Arhcivo con las opciones para la administración del sistema de estacionamiento*/ 
 #ifndef ADMINISTRADOR_H
 #define ADMINISTRADOR_H
 
@@ -113,11 +113,13 @@ void Administrador::mostrarMenu(bool &valido) {
 
 void Administrador::panelAdministracion() {
     limpiar();
-    cout << "\n\t=== PANEL DE ADMINISTRACIÓN ===\n\n";
-    cout << "\t[1] Ver ocupación actual\n";
-    cout << "\t[2] Ver ingresos del día\n";
-    cout << "\t[3] Ver convenios\n";
-    cout << "\t[0] Volver\n\n\tOpción: ";
+    cout << u8"\n\t=== PANEL DE ADMINISTRACIÓN ===\n\n";
+    cout << u8"\t [1] Ver ocupación actual\n";
+    cout << u8"\t [2] Ver ingresos del día al momento\n";
+    cout << "\t [3] Realizar corte de caja\n";
+    cout << "\t [4] Ver ganancias totales\n";
+    cout << "\t [5] Ver convenios\n";
+    cout << "\t [0] Volver\n\n\tOpción: ";
     int op; cin >> op;
     switch(op) {
         case 1:
@@ -128,8 +130,15 @@ void Administrador::panelAdministracion() {
         case 2:
             cout << "\n\tIngresos del día: en desarrollo...\n"; 
             break;
-        case 3: 
-            cout << "\n\tConvenios: MEXABANK(3578), SIS(1598), SEGURO(6482)\n"; 
+        case 3: cout << "\n\t Corte de caja\n";
+            break;
+        case 4: cout << "\n\t Gananacias totales del estacionamiento\n";
+            break;
+        case 5: 
+            cout << "\n\t\t ====> Convenios <====" << 
+            u8"\n\t - MEXABANK | Código: 3578" << 
+            u8"\n\t - SIS | Código: 1598" << 
+            u8"\n\t - SEGURO | Código: 6482\n"; 
             break;
     
     }

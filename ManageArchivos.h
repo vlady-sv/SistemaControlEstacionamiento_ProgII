@@ -157,6 +157,11 @@ int contCamiones(bool actualizar, int nCont = 0){
     return -2;    
 }
 
+//Agregar funciones para leer contadores en Administrador.h
+// Función sobrecargada para devolver el contador de cada vehículo apoyandose de la función con el mismo nombre
+int contAutos(int)       { return contAutos(false); }
+int contCamiones(int)    { return contCamiones(false); }
+int contMotos(int)       { return contMotos(false); }
 
 /* --------------------- ARCHIVOS QUE MANEJAN LOS FOLIOS DEL ESTACIONAMIENTO ----------------------- */
 int leer_folios(){
@@ -183,8 +188,3 @@ void actualizar_folios(int folio = -1){
     archivo.write(reinterpret_cast<char*>(&folio), sizeof(int));
     archivo.close();
 }
-
-//Agregar funciones para leer contadores en Administrador.h
-int contAutos()       { return contAutos(false); }
-int contCamiones()    { return contCamiones(false); }
-int contMotos()       { return contMotos(false); }
