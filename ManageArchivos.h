@@ -28,7 +28,7 @@ int CrearArchivos(){
         archivo.write(reinterpret_cast<char*>(&blanco), sizeof(Espacio));
     }
 
-    v = new Camioneta();
+    v = new Camiones();
     for(int i=1201; i<=1500; i++){      //Espacios reservados para Camiones
         blanco = Espacio(i, 0, v, c, "", false);
         archivo.write(reinterpret_cast<char*>(&blanco), sizeof(Espacio));
@@ -159,7 +159,7 @@ int contCamiones(bool actualizar, int nCont = 0){
 
 
 /* --------------------- ARCHIVOS QUE MANEJAN LOS FOLIOS DEL ESTACIONAMIENTO ----------------------- */
-int leer_folios(bool actualizar, int folio = -1){
+int leer_folios(){
     int folio;
     fstream archivo;
     archivo.open("folios.dat", ios::binary|ios::in);
@@ -173,7 +173,7 @@ int leer_folios(bool actualizar, int folio = -1){
     return folio;
 }
 
-void actualizar_folios(int folio){
+void actualizar_folios(int folio = -1){
     fstream archivo;
     archivo.open("folios.dat", ios::binary|ios::in|ios::out);
     if(!archivo){

@@ -52,7 +52,7 @@ bool validarPlaca(const string placa, int tVehiculo){
             if(!isdigit(placa[2])) return false;
             if(!isdigit(placa[3])) return false;
             if(!isdigit(placa[4])) return false;
-            if(placa[5] < 'A' || placa[7] > 'Z') return false;
+            if(placa[5] < 'A' || placa[5] > 'Z') return false;
 
             //Formato cumplido
             return true;    

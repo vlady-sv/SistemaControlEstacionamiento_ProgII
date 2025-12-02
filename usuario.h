@@ -40,7 +40,7 @@ void usuario(){
                 auxVe=false;
                 break;
             case 3:
-                v = new Camioneta();  ///////////////////CAMBIAR POR CAMIONES
+                v = new Camiones();
                 auxVe=false;
                 break;
             default: cout << u8"\n\n\t Opción inválida";
@@ -64,7 +64,7 @@ void usuario(){
         ++cAutos;
     }else if(tipoVehiculo == 2){
         cMotos = contMotos(false);
-        if(cMotos == CAMIONES){
+        if(cMotos == MOTOS){
             cout << u8"\n\t Lo sentimos, el estacionamiento se encuentra lleno.";
             cout << u8"\n\t Por favor, dé la vuelta. Gracias por su visita.";
             return;
@@ -72,7 +72,7 @@ void usuario(){
         ++cMotos;
     }else{
         cCamiones = contCamiones(false);
-        if(cCamiones == MOTOS){
+        if(cCamiones == CAMIONES){
             cout << u8"\n\t Lo sentimos, el estacionamiento se encuentra lleno.";
             cout << u8"\n\t Por favor, dé la vuelta. Gracias por su visita.";
             return;
@@ -89,7 +89,7 @@ void usuario(){
         else if(tipoVehiculo == 2) 
             cout << "\n\t '00AAA0' (Sin guiones)";      //Caso Vehículo = Placa Moto
         else 
-            cout  << "\n\t 'dda' (Los guiones también deben ingresarse)";       //Caso Vehículo = Placa Camión
+            cout  << "\n\t 'dda' (Los guiones también deben ingresarse)";       //Caso Vehículo = Placa Camión  ////////////////////////////////////Averiguar cual es la placa de los camiones (formato)
         cout << u8"\n\t Ingrese el número de la placa de su vehículo en el formato solicitado: ";
         cin.ignore();
         cin >> placa;
@@ -155,11 +155,11 @@ void usuario(){
     
     /* ------ ACTUALIZAR LA CANTIDAD DE LUGARES OCUPADOS ----------------*/
     if(tipoVehiculo == 1){
-        actualizarAutos(true, cAutos);
+        contAutos(true, cAutos);
     }else if(tipoVehiculo == 2){
-        actualizarCamionetas(true, cCamiones);
+        contMotos(true, cMotos);
     }else{
-        actualizarMotos(true, cMotos);
+        contCamiones(true, cCamiones);
     }
 
     //Guardar todo en el espacio de estacionamiento
@@ -214,7 +214,7 @@ void usuario(){
 
     archivo.close();
 
-    //Mostrarle al usuario su ticket de ingreso y especificarle que necesita su folio para salir
+    ////////////////////////////////////Mostrarle al usuario su ticket de ingreso y especificarle que necesita su folio para salir
 
     
 }

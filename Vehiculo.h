@@ -62,12 +62,12 @@ class Moto : public Vehiculo {
         }
 };
 
-class Camioneta : public Vehiculo{
+class Camiones : public Vehiculo{
     public:
-        Camioneta(){
-            tipo = "Camioneta";
+        Camiones(){
+            tipo = "Camiones";
         }
-        Camioneta(string p) : Vehiculo(p, "Camioneta") {}
+        Camiones(string p) : Vehiculo(p, "Camiones") {}
 
         void mostrarInfo() const override{
             cout << "Placa: " << placa << " | Tipo: " << tipo << endl;
