@@ -183,3 +183,8 @@ void actualizar_folios(int folio = -1){
     archivo.write(reinterpret_cast<char*>(&folio), sizeof(int));
     archivo.close();
 }
+
+//Agregar funciones para leer contadores en Administrador.h
+int contAutos()       { return contAutos(false); }
+int contCamiones()    { return contCamiones(false); }
+int contMotos()       { return contMotos(false); }
