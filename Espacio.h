@@ -4,10 +4,11 @@
 #include <chrono>
 #include "Vehiculo.h"
 #include "convenio.h"
+#include "calculoTiempo.h"
 using namespace std;
 using namespace std::chrono;
-using reloj = steady_clock;
-using tiempo = steady_clock::time_point;
+using reloj = system_clock;
+using tiempo = system_clock::time_point;
 
 class Espacio{
     private:
@@ -19,9 +20,8 @@ class Espacio{
         tiempo fechaLlegada;
         tiempo horaSalida;
         tiempo fechaSalida;
-        tiempo horasDuracion;
-        tiempo diasDuracion;
-        //tiempo duracion = duration_cast<minutes>(salida - llegada);         //////////////Obtener duracion - pasar a parte de Ticket
+        int horasDuracion;
+        int diasDuracion;
         string tarifa;
         bool ocupado;
 
@@ -39,8 +39,8 @@ class Espacio{
         void set_fechaSalida(tiempo);
         void set_tarifa(string);
         void set_ocupado(bool);
-        void set_horasDuracion(tiempo);
-        void set_diasDuracion(tiempo);
+        void set_horasDuracion(int);
+        void set_diasDuracion(int);
         int get_numEspacio();
         int get_folio();
         Vehiculo* get_vehiculo();
@@ -50,11 +50,11 @@ class Espacio{
         tiempo get_horaSalida();
         tiempo get_fechaSalida();
         string get_tarifa();
-        tiempo get_horasDuracion();
-        tiempo get_diasDuracion();
+        int get_horasDuracion();
+        int get_diasDuracion();
         bool get_ocupado();
-        bool establecerLlegada();
-        bool establecerSalida();
+        void establecerLlegada();
+        void establecerSalida();
         void calcularDuracion();
         void mostrarEspacio();
         ~Espacio();
@@ -128,11 +128,11 @@ void Espacio::set_ocupado(bool ocupado){
     this->ocupado = ocupado;
 }
 
-void Espacio::set_horasDuracion(tiempo horasDuracion){
+void Espacio::set_horasDuracion(int horasDuracion){
     this->horasDuracion = horasDuracion;
 }
 
-void Espacio::set_diasDuracion(tiempo diasDuracion){
+void Espacio::set_diasDuracion(int diasDuracion){
     this->diasDuracion = diasDuracion;
 }
 
@@ -172,27 +172,36 @@ bool Espacio::get_ocupado(){
     return ocupado;
 }
 
-tiempo Espacio::get_horasDuracion(){
+int Espacio::get_horasDuracion(){
     return horasDuracion;
 }
 
-tiempo Espacio::get_diasDuracion(){
+int Espacio::get_diasDuracion(){
     return diasDuracion;
 }
 
-bool Espacio::establecerLlegada(){
-    horaLlegada;
-    fechaLlegada;
+void Espacio::establecerLlegada(){
+    tiempo ahora = reloj::now();
+    horaLlegada = ahora;
+    fechaLlegada = ahora;
 }
 
-bool Espacio::establecerSalida(){
-    horaSalida;
-    fechaSalida;
+void Espacio::establecerSalida(){
+    tiempo ahora = reloj::now();
+    horaSalida = ahora;
+    fechaSalida = ahora;
 }
 
 void Espacio::calcularDuracion(){
-    horasDuracion;
-    diasDuracion;
+    if(tarifa == "horas"){
+        horasDuracion = horasCobrar(horaLlegada, horaSalida);
+        //Hacer la multiplicación de las horas por el monto por hora
+    }else if(tarifa == "dia"){
+        diasDuracion = diasCobrar(horaLlegada, horaSalida);
+        //Hacer la multiplicación de los días por el monto por día
+    }else{
+
+    }
 }
 
 void Espacio::mostrarEspacio(){
