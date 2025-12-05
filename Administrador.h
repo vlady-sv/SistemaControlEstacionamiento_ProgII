@@ -7,8 +7,6 @@
 #include <windows.h>
 using namespace std;
 
-#define CADMIN "0123"
-#define CAPAGAR "0000"
 #define AUTOS 500
 #define Camiones 500
 #define MOTOS 500
@@ -22,59 +20,10 @@ public:
     static void administrador(bool &valido);
     
 private:
-    static void mostrarMenu(bool &valido);
     static void panelAdministracion();
     static void pausar();
     static void limpiar();
 };
-
-void Administrador::administrador(bool &valido) {
-    
-    cout << "\n\t Bienvenido Administrador";
-    mostrarMenu(valido);
-}
-
-
-void Administrador::mostrarMenu(bool &valido) {
-    int opc;
-    do {
-        limpiar();
-        cout << "\n\t [1] Administrar el sistema del estacionamiento";
-        cout << "\n\t [2] Volver a la pantalla principal";
-        cout << "\n\t [0] Apagar el sistema";
-        cout << u8"\n\n\t Elige una opción: ";
-        cin >> opc;
-
-        switch(opc) {
-            case 1: 
-                panelAdministracion(); 
-                break;
-            case 2: {
-                char r;
-                do {
-                    cout << "\n\t Regresar a la pantalla principal? s/n: ";
-                    cin >> r;
-                }while (r != 's' && r != 'S' && r != 'n' && r != 'N');
-                if (r=='s' || r=='S') return;
-                break;
-            }
-            case 0:{
-                string code;
-                int intentos = 0;
-                bool ok = false;
-                do{
-                    cout << u8"\n\t Ingresa el código para apagar el equipo (4 números): ";
-                    cin >> code;
-                    if (code == CAPAGAR) { ok = true; valido = true; }
-                    else { cout << u8"\n\t Código incorrecto\n"; intentos++; }
-                }while (!ok && intentos < 3);
-                if (ok) cout << u8"\n\t SISTEMA APAGADO.\n";
-                return;
-            }
-            default: cout << u8"\n\t Opción inválida"; pausar(); break;
-        }
-    } while (true);
-}
 
 void Administrador::panelAdministracion() {
     limpiar();
