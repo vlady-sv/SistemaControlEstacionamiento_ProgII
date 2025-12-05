@@ -22,7 +22,6 @@ public:
     static void administrador(bool &valido);
     
 private:
-    static bool validarCodigo(const string& codigo);
     static void mostrarMenu(bool &valido);
     static void panelAdministracion();
     static void pausar();
@@ -30,41 +29,7 @@ private:
 };
 
 void Administrador::administrador(bool &valido) {
-    string codigo;
-    int cont = 0;
-    bool correcta = false;
-
-
-    do {
-        cout << u8"\n\t Ingresa el código de administrador (4 números): ";
-        cin >> codigo;
-
-        if (codigo.length() != 4) {
-            cout << u8"\n\t Debe tener exactamente 4 dígitos.\n";
-            continue;
-        }
-        bool soloDigitos = true;
-        for (char c : codigo) if (!isdigit(c)) soloDigitos = false;
-
-        if (!soloDigitos) {
-            cout << u8"\n\t Solo números.\n";
-            continue;
-        }
-
-        if (codigo == CADMIN) {
-            correcta = true;
-        } else {
-            ++cont;
-            cout << u8"\n\t Código de administrador incorrecto.\n\n";
-        }
-
-        if (cont == 3) {
-            cout << u8"\n\t Intentos de inicio de sesión agotados.\n\n";
-            pausar();
-            return;
-        }
-    } while (!correcta);
-
+    
     cout << "\n\t Bienvenido Administrador";
     mostrarMenu(valido);
 }
