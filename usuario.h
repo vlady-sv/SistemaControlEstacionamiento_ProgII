@@ -89,7 +89,7 @@ void usuario(){
         else if(tipoVehiculo == 2) 
             cout << "\n\t '00AAA0' (Sin guiones)";      //Caso Vehículo = Placa Moto
         else 
-            cout  << "\n\t 'dda' (Los guiones también deben ingresarse)";       //Caso Vehículo = Placa Camión  ////////////////////////////////////Averiguar cual es la placa de los camiones (formato)
+            cout  << "\n\t 'AA-0000-A' (Los guiones también deben ingresarse)";       //Caso Vehículo = Placa Camión  ////////////////////////////////////Averiguar cual es la placa de los camiones (formato)
         cout << u8"\n\t Ingrese el número de la placa de su vehículo en el formato solicitado: ";
         cin.ignore();
         cin >> placa;

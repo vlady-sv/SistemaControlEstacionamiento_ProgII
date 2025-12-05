@@ -38,7 +38,8 @@ bool validarPlaca(const string placa, int tVehiculo){
             if(!isdigit(placa[4])) return false;
             if(!isdigit(placa[5])) return false;
             if(!isdigit(placa[6])) return false;
-            if(placa[7] < 'A' || placa[7] > 'Z') return false;
+            if(placa[7] != '-') return false;
+            if(placa[8] < 'A' || placa[8] > 'Z') return false;
 
             //Formato cumplido
             return true;    
@@ -59,7 +60,21 @@ bool validarPlaca(const string placa, int tVehiculo){
         }
     }else{
         //Si el vehiculo es un camión
-        
+        if(placa.length() == 9){
+            //Verificar cada digito del formato "AA-0000-A"
+            if(placa[0] < 'A' || placa[0] > 'Z') return false;
+            if(placa[1] < 'A' || placa[1] > 'Z') return false;
+            if(placa[2] != '-') return false;
+            if(!isdigit(placa[3])) return false;
+            if(!isdigit(placa[4])) return false;
+            if(!isdigit(placa[5])) return false;
+            if(!isdigit(placa[6])) return false;
+            if(placa[7] != '-') return false;
+            if(placa[8] < 'A' || placa[8] > 'Z') return false;
+
+            //Formato cumplido
+            return true;  
+        }
     }
     //Formato no cumplido
     return false;
