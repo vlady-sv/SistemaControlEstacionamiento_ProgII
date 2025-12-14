@@ -146,7 +146,6 @@ int contCamiones(bool actualizar, int nCont = 0){
     return -2;    
 }
 
-//Agregar funciones para leer contadores en Administrador.h
 // Función sobrecargada para devolver el contador de cada vehículo apoyandose de la función con el mismo nombre
 int contAutos(int)       { return contAutos(false); }
 int contCamiones(int)    { return contCamiones(false); }

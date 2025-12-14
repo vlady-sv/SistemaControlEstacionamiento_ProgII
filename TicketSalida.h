@@ -2,17 +2,18 @@
 #ifndef TICKETSALIDA_H
 #define TICKETSALIDA_H
 #include "TicketEntrada.h"
+#include <iomanip>
 using namespace std;
 
 #define TAUTOHORA 18
 #define TMOTOHORA 14
-#define TCAMIONHORA 25
-#define TAUTODIA 180
+#define TCAMIONHORA 25 
+#define TAUTODIA 180 //Por dia se descuentan el equivalente a dos horas
 #define TMOTODIA 140
-#define TCAMIONDIA 260
-#define TAUTOMES 9500
-#define TMOTOMES 7500
-#define TCAMIONMES 15500
+#define TCAMIONDIA 250
+#define TAUTOMES 6156 //Por mes se descuenta el equivalente a 1 1/2 días de servicio (18 horas)
+#define TMOTOMES 4816
+#define TCAMIONMES 8550
 
 class TicketSalida{
     private:
@@ -24,7 +25,7 @@ class TicketSalida{
         friend void guardarTicketS(TicketSalida&);
 
     public:
-        TicketSalida(Espacio e = Espacio(), char horaSalida[15] = {}, char diaSalida[15] = {}, double totalPagar = 0.0, int duracion  = 0){
+        TicketSalida(Espacio e = Espacio(), const char horaSalida[15] = ".", const char diaSalida[15] = ".", double totalPagar = 0.0, int duracion  = 0){
             this->e = e;
             strcpy(this->horaSalida, horaSalida);
             strcpy(this->diaSalida, diaSalida);
@@ -161,9 +162,6 @@ class TicketSalida{
                 cout << "-------------------------------------" << endl;
                 return;
             }
-            //llamamos a funciones de calcular pago/duración
-            calcularDuracion();
-            calcularPago();
 
             cout << "\n\t\t\t ***** PLAZA PARKING *****\n";
             cout << "\n\t\t\t---- Ticket de Salida ----" << endl; 
@@ -171,13 +169,17 @@ class TicketSalida{
             cout << "\n\t Hora de salida: " << horaSalida;
             cout << u8"\n\t Día de salida: " << diaSalida;
             cout << u8"\n\t Duración: " << duracion;
-            //si aplica descuento
-            if(e.get_desuento() != 0){
-                cout << u8"\n\t Descuento aplicado: " << e.get_descuento() * 100 << "%";
-            }else{
-                cout << u8"\n\t Descuento aplicado: No";
-            }    
-            cout << "\n\tTotal a pagar: $" << totalPagar << endl;
+            if(strcmp(e.get_tarifa(), "pension") == 0){
+                if(duracion == 0 || duracion > 1) cout << " meses";
+                else cout << " mes";
+            }else if(strcmp(e.get_tarifa(), "horas") == 0){
+                if(duracion == 0 || duracion > 1) cout << " horas";
+                else cout << " hora";
+            }else if(strcmp(e.get_tarifa(), "dia") == 0){
+                if(duracion == 0 || duracion > 1) cout << u8" días";
+                else cout << u8" día";
+            } 
+            cout << "\n\t Total a pagar: $" << totalPagar << endl;
             cout << "-------------------------------------" << endl;
         }
 };

@@ -109,8 +109,8 @@ void usuario(){
 
     char charPlaca[15];
     strcpy(charPlaca, placa.c_str());
-    /* ------------- ELECCIÓN DE LA TARIFA DE PAGO ----------------*/
 
+    /* ------------- ELECCIÓN DE LA TARIFA DE PAGO ----------------*/
     int selTarifa;
     char tarifa[15];
     bool selec = false;
@@ -164,9 +164,6 @@ void usuario(){
        conve = codeConvenio();      //Si el usuario tiene un convenio pedirlo y verificar que sea real
     }
 
-
-    /*Convertir las variables de los objetos con punteros a variables estaticas para escribirlas en archivo binario*/
-
     //Vehiculo
     string tipoAuto = v->getTipo();
     
@@ -177,7 +174,7 @@ void usuario(){
         strcpy(empresa, conve->get_empresa().c_str());
         descuento = conve ->get_descuento();
     }else{
-        strcpy(empresa, "N\\A");
+        strcpy(empresa, "N/A");
         descuento = 0;
     }
     
@@ -265,7 +262,7 @@ void usuario(){
     }
 
     archivo.close();
-    actualizar_folios(folio); //Actualizamos la entrada de folio
+    actualizar_folios(folio); //Actualizamos la entrada del folio
     
     //Construir el ticket de entrada del usuario 
     TicketEntrada tE(e, conv);

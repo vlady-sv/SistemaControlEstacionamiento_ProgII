@@ -5,6 +5,8 @@
 #include "usuario.h"
 #include "Facturas.h"
 
+/* 12 horas de apertura del estacionamiento (formato 24 hrs - de 8hrs a 20hrs)*/
+
 /*CODIGOS DE VERIFICACION EN ORDEN:
 ADMNISTRADOR, APAGAR SISTEMA */
 #define CADMIN "0123"
@@ -89,7 +91,7 @@ void salir(){
         cin >> opcion;
 
         if(opcion == 2){
-            cout << u8"\n\t Por favor, dirijase a la oficina de ayuda del estacionamiento.";
+            cout << u8"\n\t Por favor, dirijase a la oficina de ayuda del estacionamiento.\n\n";
             system("pause");
             return;
         }
@@ -230,7 +232,8 @@ bool apagar(){
 
         if(code == CAPAGAR) return true;
         else{
-            cout << u8"\n\n\t Código incorrecto";
+            cout << u8"\n\n\t Código incorrecto\n";
+            cout << "\n-----------------------------\n";
             ++cont;
         }
 

@@ -27,10 +27,9 @@ bool verificar4Digits(const string codigo){
 /*-------------------------- VERIFICAR FORMATO CORRECTO DE PLACA -------------------*/
 
 bool validarPlaca(const string placa, int tVehiculo){
-    //Verificar longitud de la cadena
-
     //Si el vehiculo es un auto
     if(tVehiculo == 1){
+        //Verificar longitud de la cadena
         if(placa.length() == 9){
             //Verificar cada digito del formato "AAA-000-A"
             if(placa[0] < 'A' || placa[0] > 'Z') return false;
@@ -46,8 +45,9 @@ bool validarPlaca(const string placa, int tVehiculo){
             //Formato cumplido
             return true;    
         }
-    }else if (tVehiculo == 2){
         //Si el vehiculo es una moto
+    }else if (tVehiculo == 2){
+        //Verificar longitud de la cadena
         if(placa.length() == 6){
             //Verificar cada digito del formato "00AAA0"
             if(!isdigit(placa[0])) return false;
@@ -60,8 +60,9 @@ bool validarPlaca(const string placa, int tVehiculo){
             //Formato cumplido
             return true;    
         }
-    }else{
         //Si el vehiculo es un camión
+    }else{
+        //Verificar longitud de la cadena
         if(placa.length() == 9){
             //Verificar cada digito del formato "AA-0000-A"
             if(placa[0] < 'A' || placa[0] > 'Z') return false;

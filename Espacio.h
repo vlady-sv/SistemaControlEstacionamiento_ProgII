@@ -40,7 +40,7 @@ class Espacio{
         bool ocupado;
 
     public:
-        Espacio(int, int, char[10], char[15], char[20], double, char[15], char[15], char[15], bool);
+        Espacio(int, int, const char[10], const char[15], const char[20], double, const char[15], const char[15], const char[15], bool);
         Espacio(Espacio const &);
         void set_numEspacio(int);
         void set_folio(int);
@@ -72,8 +72,8 @@ class Espacio{
         friend bool leerEspacio(fstream &, Espacio &);
 };
 
-Espacio::Espacio(int numEspacio = 0, int folio = 0, char tipoVehiculo[10] = ".", char placa[15] = ".", char empresa[30] = ".", 
-    double descuento = 0.0, char horaLlegada[15] = ".", char diaLlegada[15] = ".", char tarifa[15] = ".", bool ocupado = false){
+Espacio::Espacio(int numEspacio = 0, int folio = 0, const char tipoVehiculo[10] = ".", const char placa[15] = ".", const char empresa[30] = ".", 
+    double descuento = 0.0, const char horaLlegada[15] = ".", const char diaLlegada[15] = ".", const char tarifa[15] = ".", bool ocupado = false){
     this->numEspacio = numEspacio;
     this->folio = folio;
     strcpy(this->tipoVehiculo, tipoVehiculo);
@@ -194,10 +194,14 @@ void Espacio::mostrarEspacio(bool mostrarOcupado) const{
     cout << u8"\n\t Tipo de Vehículo: " << tipoVehiculo;
     cout << "\n\t Placa: " << placa;
     cout << "\n\t Empresa: " << empresa;
-    cout << "\n\t Descuento: " << to_string(descuento*100) << "%";
+    if(descuento != 0){
+        cout << "\n\t Descuento aplicado: " << fixed << setprecision(1) << descuento*100 << "%";
+    }else{
+        cout << "\n\t Descuento aplicado: N/A";
+    }
     cout << "\n\t Hora de llegada: " << horaLlegada;
     cout << u8"\n\t Día de llegada: " << diaLlegada;
-    cout << "\n\t Tarifa: " << tarifa;
+    cout << "\n\t Tarifa: Por " << (strcmp(tarifa, "pension") == 0? u8"mes/pensión" : tarifa);
     if(mostrarOcupado) cout << "\n\t Ocupado: " << (ocupado? u8"Sí":"No");
 }
 

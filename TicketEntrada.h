@@ -59,11 +59,11 @@ class TicketEntrada{
         }
 };
 
-void guardarTicketE(TicketEntrada& obj){//Crear lógica para guardar el ticket con funcion amiga
+void guardarTicketE(TicketEntrada& obj){ //Lógica para guardar el ticket con funcion amiga
 
     fs::path carpeta = "Tickets_Entrada"; //Carpeta donde se estaran guardando todos los tickets de salida
     if(!fs::exists(carpeta)){
-        fs::create_directories(carpeta);  //Si aun no existe se crea
+        fs::create_directories(carpeta);  //Si aún no existe se crea
     }
     string nomTicket;
     nomTicket = "Ticket_" + to_string(obj.e.get_folio());
