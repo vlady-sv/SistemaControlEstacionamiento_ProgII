@@ -1,94 +1,88 @@
 //CLASE - TICKET DE SALIDA
-
 #ifndef TICKETENTRADA_H
 #define TICKETENTRADA_H
-
 #include <iostream>
 #include <ctime>
 #include <fstream>
+#include <iomanip>
+#include <sstream>
+#include <filesystem>
 #include "Vehiculo.h"
-
+#include "calculoTiempo.h"
+#include "Espacio.h"
+namespace fs = std::filesystem;
 using namespace std;
 
 class TicketEntrada{
     private:
-        Vehiculo* vehiculo;
-        time_t horaEntrada;
-        int folio;
-        int numEspacio;
-        string tarifa;
+        Espacio e;
+        bool siConvenio;
+        friend void guardarTicketE(TicketEntrada&);
 
     public:
-        TicketEntrada(Vehiculo* vehiculo = nullptr, time_t horaEntrada= 0.0, int folio = 0, int numEspacio = -1, string tarifa = ""){
-            this -> vehiculo = vehiculo;
-            this -> horaEntrada = horaEntrada;
-            this -> folio = folio;
-            this -> numEspacio = numEspacio;
-            this -> tarifa = tarifa;
+        TicketEntrada(Espacio e, bool siConvenio){
+            this -> e = e;
+            this -> siConvenio = siConvenio;
         }
 
-        void set_Vehiculo(Vehiculo* vehiculo){
-            this -> vehiculo = vehiculo;
-        }
-        
-        void set_horaEntrada(time_t horaEntrada){
-            this -> numEspacio = numEspacio;
-        }
-        
-        void set_folio(int folio){
-            this -> folio = folio;
+        void set_Espacio(Espacio e){
+            this -> e = e;
         }
 
-        void set_numEspacio(int numEspacio){
-            this -> numEspacio = numEspacio;
+        void set_siConvenio(bool siConvenio){
+            this -> siConvenio = siConvenio;
         }
 
-        void set_tarifa(string tarifa){
-            this -> tarifa = tarifa;
+        Espacio get_Espacio() const{
+            return e;
         }
 
-        Vehiculo* get_Vehiculo() const{
-            return vehiculo;
+        bool get_siConvenio() const{
+            return siConvenio;
         }
-
-        time_t get_horaEntrada() const{
-            return horaEntrada;
-        }
-
-        int get_folio(){
-            return folio;
-        }
-
-        int get_numEspacio(){
-            return numEspacio;
-        }
-
-        string get_tarifa(){
-            return tarifa;
-        }
-        
 
         void mostrarTicketEntrada() const{
-            cout << "\n\t ***** Ticket de Estacionamiento *****" << endl;
-            /////////////////////////PONERLE NOMBRE AL ESTACIONAMIENTO
-
             //validacion en caso de que se quiera imprimir un ticket sin haber registro
-            if (vehiculo == nullptr) {
+            if (e.get_numEspacio() == 0) {
                 cout << "\n\t [ERROR] Ticket sin vehículo asignado." << endl;
                 cout << "-------------------------------------" << endl;
                 return;
             }
 
-            //composicion de la clase Vehiculo
-            vehiculo->mostrarInfo();
+            cout << "\n\t\t\t ***** PLAZA PARKING *****\n";
+            cout << "\n\t ---- Ticket de Entrada ----" << endl; 
+            e.mostrarEspacio(false);
+            cout << u8"\n\t Para salir del estacionamiento se necesita este ticket, favor de guardarlo así como "
+                 << "su número de folio.";
 
-            cout << "\n\t Espacio: " << numEspacio << endl;
-            cout << "\n\t Hora de entrada: " << ctime(&horaEntrada);
-            cout << "\n\t Fecha: "; ////Mostrar la fecha
-            cout << "\n\t Tarifa elegida: " << tarifa;
-
-            cout << "-------------------------------------" << endl;
+            cout << "\n-------------------------------------" << endl;
         }
 };
+
+void guardarTicketE(TicketEntrada& obj){//Crear lógica para guardar el ticket con funcion amiga
+
+    fs::path carpeta = "Tickets_Entrada"; //Carpeta donde se estaran guardando todos los tickets de salida
+    if(!fs::exists(carpeta)){
+        fs::create_directories(carpeta);  //Si aun no existe se crea
+    }
+    string nomTicket;
+    nomTicket = "Ticket_" + to_string(obj.e.get_folio());
+    nomTicket = nomTicket + "_" + obj.e.get_diaLlegada();
+    nomTicket = nomTicket + ".dat"; //Construimos el nombre completo del archivo
+
+    fs::path archivo = carpeta/nomTicket; //La ruta + el nombre
+
+    fstream ticket;
+    ticket.open(archivo, ios::binary|ios::out);
+    if(!ticket.is_open()){
+        cout << u8"\n\t El ticket no se abrio correctamente [Error en crear ticket entrada]";
+        return;
+    }
+
+    ticket.write(reinterpret_cast<char*>(&obj.e), sizeof(Espacio));
+    ticket.write(reinterpret_cast<char*>(&obj.siConvenio), sizeof(bool));
+
+    ticket.close();
+}
 
 #endif

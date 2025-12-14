@@ -1,130 +1,64 @@
-#include "Espacio.h"
+#ifndef CALCULOTIEMPO_H
+#define CALCULOTIEMPO_H
+
+#include <chrono>
+using namespace std::chrono;
+using reloj = system_clock;
+using tiempo = system_clock::time_point;
+
 #define ABIERTO 8 // Hora de apertura del estacionamiento
 #define CERRADO 8 // Hora de cierre del estacionamiento
 
-int horasCobrar(tiempo llegada, tiempo salida){
-    int horasTotales = 0; /* Horas que el cliente estuvo en el estacionamiento en el
-    horario de cada dia */
+int stringToSegundos(const string hms){
+    int hh = stoi(hms.substr(0,2));
+    int mm = stoi(hms.substr(3,2));
+    int ss = stoi(hms.substr(6,2));
 
-    //Conversión de las horas a variable time_t para hacer los calculos con mayor facilidad
-    time_t inicio = reloj::to_time_t(llegada);
-    time_t fin = reloj::to_time_t(salida);
-
-
-    while(inicio < fin){
-        tm tmInicio;
-
-        #ifdef _WIN32
-            localtime_s(&tmInicio, &inicio);
-        #else
-            tmInicio = *localtime(&inicio);
-        #endif
-
-        //Obtener los valores del dia actual para hacer los calculos
-
-        //Apertura
-        tm tmApertura = tmInicio;
-        tmApertura.tm_hour = ABIERTO;
-        tmApertura.tm_min = 0;
-        tmApertura.tm_sec = 0;
-
-        //Cierre
-        tm tmCierre = tmInicio;
-        tmCierre.tm_hour = CERRADO;
-        tmCierre.tm_min = 0;
-        tmCierre.tm_sec = 0;
-
-        time_t abiertoDia = mktime(&tmApertura);
-        time_t cerradoDia = mktime(&tmCierre);
-
-        //Determinar el inicio de cobro del día
-        time_t inicioCobro = max(inicio, abiertoDia);
-        //Determinar el final de cobro del día
-        time_t finCobro = max(fin, cerradoDia);
-
-        if(inicioCobro < finCobro){
-            int segundos = (int)(finCobro - inicioCobro);
-            int minutos = (segundos % 3600) / 60;
-            int horas = segundos / 3600;
-            
-            //Revisar la tolerancia de 15 minutos
-            if(minutos > 15) horas++; //Si es mayor se redondea hacia arriba
-
-            horasTotales += horas; //Se acumulan el total de horas
-        }
-
-        // Pasamos al día siguiente (se valida en el while principal si es que hay otro día)
-        tmInicio.tm_mday += 1;
-        tmInicio.tm_hour = 0;
-        tmInicio.tm_min = 0;
-        tmInicio.tm_sec = 0;
-        inicio = mktime(&tmInicio);
-    }
-
-    return horasTotales;
+    return hh*3600 + mm*60 + ss; //Devuelve la hora en segundos
 }
 
-int diasCobrar(tiempo llegada, tiempo salida){
-    int diasTotales = 0; /* Dias que el cliente estuvo en el estacionamiento */
-    bool primerDia = true;
+int horasCobrar(string llegada, string salida){
+    int llegadaSegs = stringToSegundos(llegada);
+    int salidaSegs = stringToSegundos(salida);
 
-    //Conversión de las horas a variable time_t para hacer los calculos con mayor facilidad
-    time_t inicio = reloj::to_time_t(llegada);
-    time_t fin = reloj::to_time_t(salida);
-
-
-    while(inicio < fin){
-        tm tmInicio;
-
-        #ifdef _WIN32
-            localtime_s(&tmInicio, &inicio);
-        #else
-            tmInicio = *localtime(&inicio);
-        #endif
-
-        //Obtener los valores del dia actual para hacer los calculos
-
-        //Apertura
-        tm tmApertura = tmInicio;
-        tmApertura.tm_hour = ABIERTO;
-        tmApertura.tm_min = 0;
-        tmApertura.tm_sec = 0;
-
-        //Cierre
-        tm tmCierre = tmInicio;
-        tmCierre.tm_hour = CERRADO;
-        tmCierre.tm_min = 0;
-        tmCierre.tm_sec = 0;
-
-        time_t abiertoDia = mktime(&tmApertura);
-        time_t cerradoDia = mktime(&tmCierre);
-
-        //Determinar el inicio de cobro del día
-        time_t inicioCobro = max(inicio, abiertoDia);
-        //Determinar el final de cobro del día
-        time_t finCobro = max(fin, cerradoDia);
-
-        long segundos = 0;
-        if(inicioCobro < finCobro) segundos = finCobro - inicioCobro;
-
-        //Si es el primer día sin importar cuánto pase se cobra completo
-        if(primerDia){
-            diasTotales++;
-            primerDia = false;
-        }else{
-            if(segundos > 30 * 60){ /* A partir del segundo día se da una tolerancia
-                de 30 minutos por día antes de cobrarlo completo*/
-                diasTotales++;
-            }
-        }
-
-        // Pasamos al día siguiente (se valida en el while principal si es que hay otro día)
-        tmInicio.tm_mday += 1;
-        tmInicio.tm_hour = 0;
-        tmInicio.tm_min = 0;
-        tmInicio.tm_sec = 0;
-        inicio = mktime(&tmInicio);
+    if(salidaSegs < llegadaSegs){
+        cout << "\n\t [Error] Hay un error en las horas de llegada y salida (Salida > llegada)";
+        return 0;
     }
 
-    return diasTotales;
+    int totalSegs = salidaSegs - llegadaSegs;
+
+    int horas = totalSegs / 3600; //Obtencion de las horas
+    int minutos = (totalSegs % 3600) / 60; //Obtencion de los minutos
+    
+    if(minutos > 15) horas++; /* Manejo de una tolerancia de 15 minutos por hora, si 
+    pasaron mas de 15 minutos se cobra la hora completa*/
+
+    return horas;
 }
+
+int diasCobrar(string llegada, string salida){
+    int llegadaSegs = stringToSegundos(llegada);
+    int salidaSegs = stringToSegundos(salida);
+
+    if(salidaSegs < llegadaSegs){
+        cout << "\n\t [Error] Hay un error en las horas de llegada y salida (Salida > llegada)";
+        return 0;
+    }
+    
+    int totalSegs = salidaSegs - llegadaSegs;
+    if(totalSegs <= 0){
+        cout << u8"\n\t [Error] Hay un error en las horas de llegada y salida (Cálculo <= 0)";
+        return 0;
+    }
+    
+    int dias = totalSegs / (24*3600); //Obtencion de los dias completos
+    int restoSegs = totalSegs % (24*3600); //Obtencion del tiempo restante (en segundos)
+
+    if(!(dias < 1)){
+        if(restoSegs > 30 * 60) dias++; /*Tolerancia de 30 minutos, si en el último día que estuvo el cliente 
+        estuvo por más de 30 minutos se cobra el día completo, esto solo aplica del segundo día en adelante*/
+    }
+    return dias;
+}
+#endif

@@ -1,7 +1,6 @@
 #ifndef VEHICULO_VEHICULO_H
 #define VEHICULO_VEHICULO_H
-#include <string>
-#include <iostream>
+#include "convenio.h"
 using namespace std;
 
 class Vehiculo{
@@ -62,12 +61,12 @@ class Moto : public Vehiculo {
         }
 };
 
-class Camiones : public Vehiculo{
+class Camion : public Vehiculo{
     public:
-        Camiones(){
-            tipo = "Camiones";
+        Camion(){
+            tipo = "Camion";
         }
-        Camiones(string p) : Vehiculo(p, "Camiones") {}
+        Camion(string p) : Vehiculo(p, "Camion") {}
 
         void mostrarInfo() const override{
             cout << "Placa: " << placa << " | Tipo: " << tipo << endl;

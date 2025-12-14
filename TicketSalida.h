@@ -1,83 +1,204 @@
 //CLASE - TICKET DE SALIDA
-
 #ifndef TICKETSALIDA_H
 #define TICKETSALIDA_H
-
-#include <iostream>
-#include <ctime>
-#include <fstream>
-#include "Vehiculo.h"
-
+#include "TicketEntrada.h"
 using namespace std;
+
+#define TAUTOHORA 18
+#define TMOTOHORA 14
+#define TCAMIONHORA 25
+#define TAUTODIA 180
+#define TMOTODIA 140
+#define TCAMIONDIA 260
+#define TAUTOMES 9500
+#define TMOTOMES 7500
+#define TCAMIONMES 15500
 
 class TicketSalida{
     private:
-        Vehiculo* vehiculo;
-        time_t horaEntrada;
-        time_t horaSalida;
-        int numeroEspacio;
+        Espacio e;
+        char horaSalida[15];
+        char diaSalida[15];
         double totalPagar;
-        bool activo;
+        int duracion;
+        friend void guardarTicketS(TicketSalida&);
 
     public:
-        TicketSalida(Vehiculo* v = nullptr, int espacio = -1){
-            vehiculo = v;
-            numeroEspacio = espacio;
-            horaEntrada = time(nullptr);
-            horaSalida = 0;
-            totalPagar = 0;
-            activo = true;
+        TicketSalida(Espacio e = Espacio(), char horaSalida[15] = {}, char diaSalida[15] = {}, double totalPagar = 0.0, int duracion  = 0){
+            this->e = e;
+            strcpy(this->horaSalida, horaSalida);
+            strcpy(this->diaSalida, diaSalida);
+            this->totalPagar = totalPagar;
+            this->duracion = duracion;
         }
 
-        void registrarSalida(){
-            horaSalida = time(nullptr);
-            activo = false;
-        }
-        //hace el calculo de la hora de entrada con hra de salida y calcula la(s) horas que estuvo el vehiculo
-        double calcularTiempo() const{
-            if (horaSalida == 0) return 0;
-            double segundos = difftime(horaSalida, horaEntrada);
-            return segundos / 3600.0; // Tiempo en horas
+        //Setters
+        void set_Espacio(Espacio e){
+            this->e = e;
         }
 
-        double calcularCosto(double tarifaBase){
-            double horas = calcularTiempo();
-            totalPagar = horas * tarifaBase;
+        void set_horaSalida(char horaSalida[15]){
+            strcpy(this->horaSalida, horaSalida);
+        }
+
+        void set_diaSalida(char diaSalida[15]){
+            strcpy(this->diaSalida, diaSalida);
+        }
+
+        void set_totalPagar(double totalPagar){
+            this->totalPagar = totalPagar;
+        }
+
+        void set_duracion(int duracion){
+            this->duracion = duracion;
+        }
+
+        //Getters
+        Espacio get_Espacio() const{
+            return e;
+        }
+
+        const char* get_horaSalida() const{
+            return horaSalida;
+        }
+
+        const char* get_diaSalida() const{
+            return diaSalida;
+        }
+
+        double get_totalPagar(){
             return totalPagar;
         }
 
-        void imprimirTicket() const{
-            cout << "***** Ticket de Estacionamiento *****" << endl;
+        int get_duracion() const{
+            return duracion;
+        }
 
+        //Función para establecer dia y hora de salida
+        void establecerSalida(){
+            tiempo ahora = reloj::now();
+            strcpy(horaSalida, tiempoToStringHora(ahora).c_str());
+            strcpy(diaSalida, tiempoToStringFecha(ahora).c_str());
+        }
+
+        // Función para calcular el tiempo que el cliente estuvo en el estacionamiento
+        void calcularDuracion(){
+            if(strcmp(e.get_tarifa(), "horas") == 0){
+                duracion  = horasCobrar(e.get_horaLlegada(), horaSalida);
+            }else if(strcmp(e.get_tarifa(), "dia") == 0){
+                duracion = diasCobrar(e.get_horaLlegada(), horaSalida);
+            }else{
+                duracion = 1; //En el caso de tarifa por mes, solo esta permitido que el auto se quede un mes, no mas
+            }
+        }
+
+        void calcularPago(){
+            
+            if(e.get_descuento() != 0){
+                /* CON CONVENIO DE DESCUENTO*/
+                if(strcmp(e.get_tarifa(),"horas") == 0){
+                    if(strcmp(e.get_tipoVehiculo(), "Auto") == 0){
+                        totalPagar  = duracion*TAUTOHORA; //Tarifa de hora para auto
+                    }else if(strcmp(e.get_tipoVehiculo(), "Moto") == 0){
+                        totalPagar  = duracion*TMOTOHORA; //Tarifa de hora para moto
+                    }else{
+                        totalPagar  = duracion*TCAMIONHORA; //Tarifa de hora para camion
+                    }
+                    totalPagar = totalPagar - (totalPagar*e.get_descuento());
+                }else if(strcmp(e.get_tarifa(), "dia") == 0){
+                    if(strcmp(e.get_tipoVehiculo(), "Auto") == 0){
+                        totalPagar  = duracion*TAUTODIA; //Tarifa de dia para auto
+                    }else if(strcmp(e.get_tipoVehiculo(), "Moto") == 0){
+                        totalPagar  = duracion*TMOTODIA; //Tarifa de dia para moto
+                    }else{
+                        totalPagar  = duracion*TCAMIONDIA; //Tarifa de dia para camion
+                    }
+                    totalPagar = totalPagar - (totalPagar*e.get_descuento());
+                }else{
+                    if(strcmp(e.get_tipoVehiculo(), "Auto") == 0){
+                        totalPagar  = duracion*TAUTOMES; //Tarifa de mes para auto
+                    }else if(strcmp(e.get_tipoVehiculo(), "Moto") == 0){
+                        totalPagar  = duracion*TMOTOMES; //Tarifa de mes para moto
+                    }else{
+                        totalPagar  = duracion*TCAMIONMES; //Tarifa de mes para camion
+                    }
+                    totalPagar = totalPagar - (totalPagar*e.get_descuento());
+                }
+            }else{
+                /* SIN CONVENIO DE DESCUENTO*/
+                if(strcmp(e.get_tarifa(), "horas") == 0){
+                    if(strcmp(e.get_tipoVehiculo(), "Auto") == 0){
+                        totalPagar  = duracion*TAUTOHORA; //Tarifa de hora para auto
+                    }else if(strcmp(e.get_tipoVehiculo(), "Moto") == 0){
+                        totalPagar  = duracion*TMOTOHORA; //Tarifa de hora para moto
+                    }else{
+                        totalPagar  = duracion*TCAMIONHORA; //Tarifa de hora para camion
+                    }
+                }else if(strcmp(e.get_tarifa(), "dia") == 0){
+                    if(strcmp(e.get_tipoVehiculo(), "Auto") == 0){
+                        totalPagar  = duracion*TAUTODIA; //Tarifa de dia para auto
+                    }else if(strcmp(e.get_tipoVehiculo(), "Moto") == 0){
+                        totalPagar  = duracion*TMOTODIA; //Tarifa de dia para moto
+                    }else{
+                        totalPagar  = duracion*TCAMIONDIA; //Tarifa de dia para camion
+                    }
+                }else{
+                    if(strcmp(e.get_tipoVehiculo(), "Auto") == 0){
+                        totalPagar  = duracion*TAUTOMES; //Tarifa de mes para auto
+                    }else if(strcmp(e.get_tipoVehiculo(), "Moto") == 0){
+                        totalPagar  = duracion*TMOTOMES; //Tarifa de mes para moto
+                    }else{
+                        totalPagar  = duracion*TCAMIONMES; //Tarifa de mes para camion
+                    }
+                }
+            }
+        }
+
+        void imprimirTicket() const{
             //validacion en caso de que se quiera imprimir un ticket sin haber registro
-            if (vehiculo == nullptr) {
+            if (e.get_numEspacio() == 0) {
                 cout << "[ERROR] Ticket sin vehículo asignado." << endl;
                 cout << "-------------------------------------" << endl;
                 return;
             }
 
-            //composicion de la clase Vehiculo
-            vehiculo->mostrarInfo();
-
-            cout << "Espacio: " << numeroEspacio << endl;
-            cout << "Hora de entrada: " << ctime(&horaEntrada);
-
-            if (!activo)
-                cout << "Hora de salida: " << ctime(&horaSalida);
-
-            cout << "Total a pagar: $" << totalPagar << endl;
+            cout << "\n\t\t\t ***** PLAZA PARKING *****\n";
+            cout << "\n\t\t\t---- Ticket de Salida ----" << endl; 
+            e.mostrarEspacio(false); 
+            cout << "\n\t Hora de salida: " << horaSalida;
+            cout << u8"\n\t Día de salida: " << diaSalida;
+            cout << u8"\n\t Duración: " << duracion;
+            cout << "\n\tTotal a pagar: $" << totalPagar << endl;
             cout << "-------------------------------------" << endl;
         }
-
-        bool estaActivo() const{
-            return activo;
-        }
-        Vehiculo* getVehiculo() const{
-            return vehiculo;
-        }
-        double getTotal() const{
-            return totalPagar;
-        }
 };
+
+void guardarTicketS(TicketSalida& obj){ //Crear lógica para guardar el ticket con funcion amiga
+
+    fs::path carpeta = "Tickets_Salida"; //Carpeta donde se estaran guardando todos los tickets de salida
+    if(!fs::exists(carpeta)){
+        fs::create_directories(carpeta);  //Si aun no existe se crea
+    }
+    string nomTicket;
+    nomTicket = "Ticket_" + to_string(obj.e.get_folio());
+    nomTicket = nomTicket + "_" + obj.get_diaSalida();
+    nomTicket = nomTicket + ".dat"; //Construimos el nombre completo del archivo
+
+    fs::path archivo = carpeta/nomTicket; //La ruta + el nombre
+
+    fstream ticket;
+    ticket.open(archivo, ios::binary|ios::out);
+    if(!ticket.is_open()){
+        cout << u8"\n\t El ticket no se abrio correctamente [Error en crear ticket salida]";
+        return;
+    }
+
+    ticket.write(reinterpret_cast<char*>(&obj.e), sizeof(Espacio));
+    ticket.write(obj.horaSalida, sizeof(obj.horaSalida));
+    ticket.write(obj.diaSalida, sizeof(obj.diaSalida));
+    ticket.write(reinterpret_cast<char*>(&obj.totalPagar), sizeof(obj.totalPagar));
+    ticket.write(reinterpret_cast<char*>(&obj.duracion), sizeof(obj.duracion));
+    ticket.close();
+}
 
 #endif

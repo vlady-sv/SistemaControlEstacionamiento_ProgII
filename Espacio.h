@@ -1,93 +1,105 @@
 #ifndef ESPACIO_H
 #define ESPACIO_H
 #include <cstdlib>
-#include <chrono>
 #include "Vehiculo.h"
 #include "convenio.h"
 #include "calculoTiempo.h"
 using namespace std;
-using namespace std::chrono;
-using reloj = system_clock;
-using tiempo = system_clock::time_point;
+
+/* Función auxiliar para convertir tiempo a string como fecha */
+string tiempoToStringFecha(const tiempo& t){
+    time_t tt = reloj::to_time_t(t); //Conversión de tiempo a time_t
+    tm tm = *localtime(&tt); //Lo hacemos local
+    ostringstream oss;
+    oss << put_time(&tm, "%d-%m-%Y");
+
+    return oss.str();
+};
+
+/* Función auxiliar para convertir tiempo a string como hora */
+string tiempoToStringHora(const tiempo& t){
+    time_t tt = reloj::to_time_t(t); //Conversión de tiempo a time_t
+    tm tm = *localtime(&tt); //Lo hacemos local
+    ostringstream oss;
+    oss << put_time(&tm, "%H:%M:%S");
+
+    return oss.str();
+};
 
 class Espacio{
     private:
         int numEspacio;
         int folio;
-        Vehiculo* v;
-        Convenio* conv;
-        tiempo horaLlegada;
-        tiempo fechaLlegada;
-        tiempo horaSalida;
-        tiempo fechaSalida;
-        int horasDuracion;
-        int diasDuracion;
-        string tarifa;
+        char tipoVehiculo[10]; //De Vehiculo
+        char placa[15]; //De Vehiculo
+        char empresa[30]; //De Convenio
+        double descuento; //De convenio
+        char horaLlegada[15];
+        char diaLlegada[15];
+        char tarifa[15];
         bool ocupado;
 
     public:
-        Espacio();
-        Espacio(int, int, Vehiculo*, Convenio*, string, bool);
+        Espacio(int, int, char[10], char[15], char[20], double, char[15], char[15], char[15], bool);
         Espacio(Espacio const &);
         void set_numEspacio(int);
         void set_folio(int);
-        void set_vehiculo(Vehiculo*);
-        void set_convenio(Convenio*);
-        void set_horaLlegada(tiempo);
-        void set_fechaLlegada(tiempo);
-        void set_horaSalida(tiempo);
-        void set_fechaSalida(tiempo);
-        void set_tarifa(string);
-        void set_ocupado(bool);
+        void set_tipoVehiculo(char[10]);
+        void set_placa(char[15]);
+        void set_empresa(char[30]);
+        void set_descuento(double);
+        void set_horaLlegada(char[15]);
+        void set_diaLlegada(char[15]);
         void set_horasDuracion(int);
         void set_diasDuracion(int);
-        int get_numEspacio();
-        int get_folio();
-        Vehiculo* get_vehiculo();
-        Convenio* get_convenio();
-        tiempo get_horaLlegada();
-        tiempo get_fechaLlegada();
-        tiempo get_horaSalida();
-        tiempo get_fechaSalida();
-        string get_tarifa();
-        int get_horasDuracion();
-        int get_diasDuracion();
-        bool get_ocupado();
+        void set_tarifa(char[15]);
+        void set_ocupado(bool);
+        int get_numEspacio() const;
+        int get_folio() const;
+        const char* get_tipoVehiculo() const;
+        const char* get_placa() const;
+        const char* get_empresa() const;
+        double get_descuento() const;
+        const char* get_horaLlegada() const;
+        const char* get_diaLlegada() const;
+        const char* get_tarifa() const;
+        bool get_ocupado() const;
         void establecerLlegada();
-        void establecerSalida();
         void calcularDuracion();
-        void mostrarEspacio();
-        ~Espacio();
-
+        void mostrarEspacio(bool) const;
+        Espacio& operator=(const Espacio&);
+        friend bool escribirEspacio(fstream&, Espacio&);
+        friend bool leerEspacio(fstream &, Espacio &);
 };
 
-Espacio::Espacio(){
-    numEspacio = 0;
-    folio = 0;
-    v = nullptr;
-    conv = nullptr;
-    tarifa = "";
-    ocupado = false;
-}
-
-Espacio::Espacio(int numEspacio, int folio, Vehiculo* v, Convenio* conv, string tarifa, bool ocupado){
+Espacio::Espacio(int numEspacio = 0, int folio = 0, char tipoVehiculo[10] = ".", char placa[15] = ".", char empresa[30] = ".", 
+    double descuento = 0.0, char horaLlegada[15] = ".", char diaLlegada[15] = ".", char tarifa[15] = ".", bool ocupado = false){
     this->numEspacio = numEspacio;
     this->folio = folio;
-    this->v = v;
-    this->conv = conv;
-    this->tarifa = tarifa;
+    strcpy(this->tipoVehiculo, tipoVehiculo);
+    strcpy(this->placa, placa);
+    strcpy(this->empresa, empresa);
+    this->descuento = descuento;
+    strcpy(this->horaLlegada, horaLlegada);
+    strcpy(this->diaLlegada, diaLlegada);
+    strcpy(this->tarifa, tarifa);
     this->ocupado = ocupado;
 }
 
 Espacio::Espacio(Espacio const &obj){
     numEspacio = obj.numEspacio;
     folio = obj.folio;
-    v = obj.v;
-    conv = obj.conv;
-    tarifa = obj.tarifa;
+    strcpy(tipoVehiculo, obj.tipoVehiculo);
+    strcpy(placa, obj.placa);
+    strcpy(empresa, obj.empresa);
+    descuento = obj.descuento;
+    strcpy(horaLlegada, obj.horaLlegada);
+    strcpy(diaLlegada, obj.diaLlegada);
+    strcpy(tarifa, obj.tarifa);
     ocupado = obj.ocupado;
 }
 
+/* SETTERS*/
 void Espacio::set_numEspacio(int numEspacio){
     this->numEspacio = numEspacio;
 }
@@ -96,129 +108,113 @@ void Espacio::set_folio(int folio){
     this->folio = folio;
 }
 
-void Espacio::set_vehiculo(Vehiculo* v){
-    this->v = v;
+void Espacio::set_tipoVehiculo(char tipoVehiculo[10]){
+    strcpy(this->tipoVehiculo, tipoVehiculo);
 }
 
-void Espacio::set_convenio(Convenio* conv){
-    this->conv = conv;
+void Espacio::set_placa(char placa[15]){
+    strcpy(this->placa, placa);
 }
 
-void Espacio::set_horaLlegada(tiempo horaLlegada){
-    this->horaLlegada= horaLlegada;
+void Espacio::set_empresa(char empresa[30]){
+    strcpy(this->empresa, empresa);
 }
 
-void Espacio::set_fechaLlegada(tiempo fechaLlegada){
-    this->fechaLlegada= fechaLlegada;
+void Espacio::set_descuento(double descuento){
+    this->descuento = descuento;
 }
 
-void Espacio::set_horaSalida(tiempo horaSalida){
-    this->horaSalida = horaSalida;
+void Espacio::set_horaLlegada(char horaLlegada[15]){
+    strcpy(this->horaLlegada, horaLlegada);
 }
 
-void Espacio::set_fechaSalida(tiempo fechaSalida){
-    this->fechaSalida = fechaSalida;
+void Espacio::set_diaLlegada(char diaLlegada[15]){
+    strcpy(this->diaLlegada, diaLlegada);
 }
 
-void Espacio::set_tarifa(string tarifa){
-    this->tarifa = tarifa;
+void Espacio::set_tarifa(char tarifa[15]){
+    strcpy(this->tarifa, tarifa);
 }
 
 void Espacio::set_ocupado(bool ocupado){
     this->ocupado = ocupado;
 }
 
-void Espacio::set_horasDuracion(int horasDuracion){
-    this->horasDuracion = horasDuracion;
-}
-
-void Espacio::set_diasDuracion(int diasDuracion){
-    this->diasDuracion = diasDuracion;
-}
-
-int Espacio::get_numEspacio(){
+/* GETTERS*/
+int Espacio::get_numEspacio() const{
     return numEspacio;
 }
 
-int Espacio::get_folio(){
+int Espacio::get_folio() const{
     return folio;
 }
 
-Vehiculo* Espacio::get_vehiculo(){
-    return v;
+const char* Espacio::get_tipoVehiculo() const{
+    return tipoVehiculo;
 }
 
-Convenio* Espacio::get_convenio(){
-    return conv;
+const char* Espacio::get_placa() const{
+    return placa;
 }
 
-tiempo Espacio::get_horaLlegada(){
+const char* Espacio::get_empresa() const{
+    return empresa;
+}
+
+double Espacio::get_descuento() const{
+    return descuento;
+}
+
+const char* Espacio::get_horaLlegada() const{
     return horaLlegada;
 }
 
-tiempo Espacio::get_fechaLlegada(){
-    return fechaLlegada;
+const char* Espacio::get_diaLlegada() const{
+    return diaLlegada;
 }
 
-tiempo Espacio::get_fechaSalida(){
-    return fechaSalida;
-}
-
-string Espacio::get_tarifa(){
+const char* Espacio::get_tarifa() const{
     return tarifa;
 }
 
-bool Espacio::get_ocupado(){
+bool Espacio::get_ocupado() const{
     return ocupado;
-}
-
-int Espacio::get_horasDuracion(){
-    return horasDuracion;
-}
-
-int Espacio::get_diasDuracion(){
-    return diasDuracion;
 }
 
 void Espacio::establecerLlegada(){
     tiempo ahora = reloj::now();
-    horaLlegada = ahora;
-    fechaLlegada = ahora;
+    strcpy(horaLlegada, tiempoToStringHora(ahora).c_str());
+    strcpy(diaLlegada, tiempoToStringFecha(ahora).c_str());
+
 }
 
-void Espacio::establecerSalida(){
-    tiempo ahora = reloj::now();
-    horaSalida = ahora;
-    fechaSalida = ahora;
+void Espacio::mostrarEspacio(bool mostrarOcupado) const{
+    cout << u8"\n\t\t ---> Espacio de Estacionamiento número: " << numEspacio << " <---";
+    cout << "\n\t Folio: " << folio;
+    cout << u8"\n\t Tipo de Vehículo: " << tipoVehiculo;
+    cout << "\n\t Placa: " << placa;
+    cout << "\n\t Empresa: " << empresa;
+    cout << "\n\t Descuento: " << to_string(descuento*100) << "%";
+    cout << "\n\t Hora de llegada: " << horaLlegada;
+    cout << u8"\n\t Día de llegada: " << diaLlegada;
+    cout << "\n\t Tarifa: " << tarifa;
+    if(mostrarOcupado) cout << "\n\t Ocupado: " << (ocupado? u8"Sí":"No");
 }
 
-void Espacio::calcularDuracion(){
-    if(tarifa == "horas"){
-        horasDuracion = horasCobrar(horaLlegada, horaSalida);
-        //Hacer la multiplicación de las horas por el monto por hora
-    }else if(tarifa == "dia"){
-        diasDuracion = diasCobrar(horaLlegada, horaSalida);
-        //Hacer la multiplicación de los días por el monto por día
-    }else{
-
+Espacio& Espacio::operator=(const Espacio& esp){
+    if(this != &esp){
+        numEspacio = esp.numEspacio;
+        folio = esp.folio;
+        strcpy(tipoVehiculo, esp.tipoVehiculo);
+        strcpy(placa, esp.placa);
+        strcpy(empresa, esp.empresa);
+        descuento = esp.descuento;
+        strcpy(horaLlegada, esp.horaLlegada);
+        strcpy(diaLlegada, esp.diaLlegada);
+        strcpy(tarifa, esp.tarifa);
+        ocupado = esp.ocupado;
     }
-}
-
-void Espacio::mostrarEspacio(){
-    cout << u8"\n\t Número de espacio: " << numEspacio;
-    v->mostrarInfo();
-    //Si conv no esta vacio se muestra la empresa con la que se tiene convenio y el porcentaje de descuento ofrecido
-    if(conv != nullptr){
-        cout << "\n\t Convenio con: " << conv->getNombreEmpresa();
-        cout << "\n\t Descuento: " << conv->getPorcentajeDescuento() << "%";
-    }
-    cout << u8"\n\t Tarifa: " << tarifa;
-    //Mostrar hora de llegada    
-}
-
-Espacio::~Espacio(){
-    delete v;
-    delete conv;
+    return *this;
 }
 
 #endif 

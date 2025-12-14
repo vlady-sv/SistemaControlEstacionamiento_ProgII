@@ -2,6 +2,8 @@
 este, se encarga de crear los archivos contadores de autos, motos, camiones y folios, los
 crea con valores iniciales, este archivo solo se deberá ejecutar por la persona encargada de 
 instalar el sistema la primera vez */
+#ifndef INIARCH_H
+#define INIARCH_H
 #include <iostream>
 #include <fstream>
 using namespace std;
@@ -27,7 +29,7 @@ int contAutos(int &total){ //Archivo contador de autos
     fstream archivo;
     ++total;
 
-    archivo.open("contAutos.dat", ios::binary|ios::in|ios::out);
+    archivo.open("contAutos.dat", ios::binary|ios::out);
     if(!archivo){
         cout << "\n\t Archivo contador de Autos no se abrio correctamente.";
         return 0;
@@ -45,7 +47,7 @@ int contMotos(int &total){ //Archivo contador de motos
     fstream archivo;
     ++total;
 
-    archivo.open("contMotos.dat", ios::binary|ios::in|ios::out);
+    archivo.open("contMotos.dat", ios::binary|ios::out);
     if(!archivo){
         cout << "\n\t Archivo contador de Motos no se abrio correctamente.";
         return 0;
@@ -63,7 +65,7 @@ int contCamiones(int &total){ //Archivo contador de camiones
     fstream archivo; 
     ++total;
 
-    archivo.open("contCamiones.dat", ios::binary|ios::in|ios::out);
+    archivo.open("contCamiones.dat", ios::binary|ios::out);
     if(!archivo){
         cout << "\n\t Archivo contador de Camiones no se abrio correctamente.";
         return 0;
@@ -81,9 +83,9 @@ int folios(int &total){ //Archivo para guardar los folios que se van dando
     fstream archivo;
     ++total;
 
-    archivo.open("folios.dat", ios::binary|ios::in|ios::out);
+    archivo.open("folios.dat", ios::binary|ios::out);
     if(!archivo){
-        cout << "\n\t Archivo contador de Camiones no se abrio correctamente.";
+        cout << "\n\t Archivo contador de folios no se abrio correctamente.";
         return 0;
     }
 
@@ -95,3 +97,4 @@ int folios(int &total){ //Archivo para guardar los folios que se van dando
 
     return 1;
 }
+#endif

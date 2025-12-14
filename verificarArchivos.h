@@ -1,4 +1,6 @@
-#include <iostream>
+#ifndef VERIFICARARCH_H
+#define VERIFICARARCH_H
+#include "ManageArchivos.h"
 #include <fstream>
 using namespace std;
 
@@ -13,7 +15,9 @@ bool verificarCascaron(){
     }
     val.close();
 
-    return true;
+    if(band == 1) return true;
+
+    return false;
 }
 
 void cascaronCreado(){
@@ -25,6 +29,9 @@ void cascaronCreado(){
 }
 
 /*VERIFICACIONES*/
-bool verificarFolio(){
+bool verificarFolio(int folio){
+    if(folio < 1000) return false;
     
+    return true;
 }
+#endif

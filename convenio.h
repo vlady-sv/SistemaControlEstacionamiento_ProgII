@@ -2,69 +2,65 @@
 #define CONVENIO_H
 #include <iostream>
 #include <string>
-#include <windows.h>
 using namespace std;
 
 // Clase base 
 class Convenio {
-protected:
-    string nombreEmpresa;
-    double porcentajeDescuento;
-
 public:
-
-    Convenio() : nombreEmpresa(""), porcentajeDescuento(0.0) {}
-  
-    Convenio(string nombre, double descuento)
-        : nombreEmpresa(nombre), porcentajeDescuento(descuento) {}
-
-  
-    string getNombreEmpresa() const {
-        return nombreEmpresa;
-    }
-
-    double getPorcentajeDescuento() const {
-        return porcentajeDescuento;
-    }
-
-
-    void setNombreEmpresa(const string& nombre) {
-        nombreEmpresa = nombre;
-    }
-
-    void setPorcentajeDescuento(double descuento) {
-        if (descuento >= 0 && descuento <= 100)
-            porcentajeDescuento = descuento;
-        else
-            cout << u8"Descuento inválido. Debe estar entre 0% y 100%.\n";
-    }
-
-  
-    virtual double calcularDescuento(double horas) {
-        return 0; 
-    }
-
-    virtual void mostrarDescuento(double horas) {
-        cout << "\nEmpresa: " << nombreEmpresa << endl;
-    }
+    virtual string get_empresa() = 0;
+    virtual double get_descuento() = 0;
 
     virtual ~Convenio() {}
 };
 
 // Clases derivadas
 class MexaBank : public Convenio {
+private:
+    string nombreEmpresa;
+    double descuento;
+
 public:
-    MexaBank() : Convenio("Mexabank", 10.0) {} 
+    MexaBank(string nE = "Mexabank", double d = 0.10) : nombreEmpresa(nE), descuento(d) {} 
+
+    string get_empresa(){
+        return nombreEmpresa;
+    }
+
+    double get_descuento(){
+        return descuento;
+    }
 };
 
 class Sis : public Convenio {
+private:
+    string nombreEmpresa;
+    double descuento;
 public:
-    Sis() : Convenio("Secretaría de Innovación Social", 15.0) {} 
+    Sis(string nE = "Sis", double d = 0.15) : nombreEmpresa(nE), descuento(d) {} 
+
+    string get_empresa(){
+        return nombreEmpresa;
+    }
+
+    double get_descuento(){
+        return descuento;
+    }
 };
 
 class Seguro : public Convenio {
+private:
+    string nombreEmpresa;
+    double descuento;
 public:
-    Seguro() : Convenio("Seguros Automotrices", 25.0) {}
+    Seguro(string nE = "Seguros Automotrices", double d = 0.25) : nombreEmpresa(nE), descuento(d) {}
+
+    string get_empresa(){
+        return nombreEmpresa;
+    }
+
+    double get_descuento(){
+        return descuento;
+    }
 };
 
 #endif // CONVENIO_H

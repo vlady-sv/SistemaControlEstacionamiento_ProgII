@@ -1,13 +1,11 @@
-#include <windows.h>
+#ifndef USUARIO_H
+#define USUARIO_H
 #include <algorithm>
 #include "Espacio.h"
 #include "verificarArchivos.h"
-#include "ManageArchivos.h"
-#include "validacionesPP.h"
 
 /*CODIGOS DE VERIFICACION EN ORDEN:
-ADMNISTRADOR, APAGAR SISTEMA, CONVENIO MEXABANK, CONVENIO SECRETARIA DE INNOVACIÓN SOCIAL, CONVENIO EMPRESA DE SEGUROS*/
-#define CADMIN "0123"
+CONVENIO MEXABANK, CONVENIO SECRETARIA DE INNOVACIÓN SOCIAL, CONVENIO EMPRESA DE SEGUROS*/
 #define MEXABANK "3578"
 #define SIS "1598"
 #define SEGURO "6482"
@@ -18,15 +16,21 @@ ADMNISTRADOR, APAGAR SISTEMA, CONVENIO MEXABANK, CONVENIO SECRETARIA DE INNOVACI
 #define MOTOS 600 /*Cajones de estacionamiento del 601-1200*/ //Cambiar por camiones
 #define CAMIONES 300  /*Cajones de estacionamiento del 1201-1500*/
 
+//Prototipos
+Convenio* codeConvenio();
+
 void usuario(){
     Vehiculo* v;
     int tipoVehiculo;
     bool auxVe = true, formato = false;
-    string placa, vehiculo;
+    string placa, vehiculo[10];
     do{
+        cout << "\n\t\t\t --- BIENVENIDO A PLAZA PARKING ---\n";
+        cout << "\n\t\t\t ---> Registro para Ingresar <--\n";
         cout << "\n\t [1] Automóvil";
         cout << "\n\t [2] Moto";
         cout << u8"\n\t [3] Camión";
+        cout << u8"\n\t [0] Volver al menú principal";
         cout << u8"\n\n\t Tipo de vehículo: ";
         cin >> tipoVehiculo;
 
@@ -40,8 +44,10 @@ void usuario(){
                 auxVe=false;
                 break;
             case 3:
-                v = new Camiones();
+                v = new Camion();
                 auxVe=false;
+                break;
+            case 0: return;
                 break;
             default: cout << u8"\n\n\t Opción inválida";
                 break;
@@ -55,26 +61,29 @@ void usuario(){
     int cAutos, cMotos, cCamiones;
 
     if(tipoVehiculo == 1){
-        cAutos = contAutos(0);
+        cAutos = contAutos(false);
         if(cAutos == AUTOS){
             cout << u8"\n\t Lo sentimos, el estacionamiento se encuentra lleno.";
             cout << u8"\n\t Por favor, dé la vuelta. Gracias por su visita.";
+            delete v;
             return;
         }
         ++cAutos;
     }else if(tipoVehiculo == 2){
-        cMotos = contMotos(0);
+        cMotos = contMotos(false);
         if(cMotos == MOTOS){
             cout << u8"\n\t Lo sentimos, el estacionamiento se encuentra lleno.";
             cout << u8"\n\t Por favor, dé la vuelta. Gracias por su visita.";
+            delete v;
             return;
         }
         ++cMotos;
-    }else{
-        cCamiones = contCamiones(0);
+    }else if(tipoVehiculo == 3){
+        cCamiones = contCamiones(false);
         if(cCamiones == CAMIONES){
             cout << u8"\n\t Lo sentimos, el estacionamiento se encuentra lleno.";
             cout << u8"\n\t Por favor, dé la vuelta. Gracias por su visita.";
+            delete v;
             return;
         }
         ++cCamiones;
@@ -84,12 +93,12 @@ void usuario(){
     /* INGRESAR LA PLACA DEL AUTO Y VERIFICAR EL FORMATO CORRECTO DE LA MISMA*/
     do{
         cout << "\n\t\t ====> FORMATO DE LA PLACA <====";
-        if(tipoVehiculo == 1) 
+        if(tipoVehiculo == 1)
             cout << u8"\n\t 'AAA-000-A' (Los guiones tambien deben ingresarse)";   //Caso Vehículo = Placa Automóvil
-        else if(tipoVehiculo == 2) 
+        else if(tipoVehiculo == 2)
             cout << "\n\t '00AAA0' (Sin guiones)";      //Caso Vehículo = Placa Moto
-        else 
-            cout  << "\n\t 'AA-0000-A' (Los guiones también deben ingresarse)";       //Caso Vehículo = Placa Camión  ////////////////////////////////////Averiguar cual es la placa de los camiones (formato)
+        else if(tipoVehiculo == 3)
+            cout  << "\n\t 'AA-0000-A' (Los guiones también deben ingresarse)";       //Caso Vehículo = Placa Camión 
         cout << u8"\n\t Ingrese el número de la placa de su vehículo en el formato solicitado: ";
         cin.ignore();
         cin >> placa;
@@ -98,29 +107,32 @@ void usuario(){
     }while(!formato);
     v->setPlaca(placa);
 
+    char charPlaca[15];
+    strcpy(charPlaca, placa.c_str());
     /* ------------- ELECCIÓN DE LA TARIFA DE PAGO ----------------*/
+
     int selTarifa;
-    string tarifa;
+    char tarifa[15];
     bool selec = false;
     do{
         cout << "\n\t ====> TARIFAS <====";
         cout << "\n\n\t [1] Por Horas (15 min. de tolerancia por hora)";
         cout << u8"\n\t [2] Por día (24 horas completas de pago)";
-        cout << u8"\n\t [3] Pensión (Pago por un mes completo)"; ///////////////////////////////Verificar si era por mes o por semana
+        cout << u8"\n\t [3] Pensión (Pago por un mes completo)";
         cout << "\n\n\t Elija la tarifa que se adapte a sus necesidades (NO HAY CAMBIOS DE TARIFA): ";
         cin >> selTarifa;
 
         switch(selTarifa){
             case 1:
-                tarifa = "horas";
+                strcpy(tarifa, "horas");
                 selec = true;
                 break;
             case 2:
-                tarifa = "dia";
+                strcpy(tarifa, "dia");
                 selec = true;
                 break;
             case 3:
-                tarifa = "pension";
+                strcpy(tarifa, "pension");
                 selec = true;
                 break;
         }
@@ -133,6 +145,7 @@ void usuario(){
         cout << u8"\n\t Tiene un código de convenio de empresa?";
         cout << u8"\n\n\t [1] Sí";
         cout << u8"\n\t [2] No";
+        cout << u8"\n\n\t Elija una opción: ";
         cin >> resp;
 
         switch(resp){
@@ -151,7 +164,22 @@ void usuario(){
        conve = codeConvenio();      //Si el usuario tiene un convenio pedirlo y verificar que sea real
     }
 
+
+    /*Convertir las variables de los objetos con punteros a variables estaticas para escribirlas en archivo binario*/
+
+    //Vehiculo
+    string tipoAuto = v->getTipo();
     
+    //Convenio
+    char empresa[30];
+    double descuento;
+    if(conv){
+        strcpy(empresa, conve->get_empresa().c_str());
+        descuento = conve ->get_descuento();
+    }else{
+        strcpy(empresa, "N\\A");
+        descuento = 0;
+    }
     
     /* ------ ACTUALIZAR LA CANTIDAD DE LUGARES OCUPADOS ----------------*/
     if(tipoVehiculo == 1){
@@ -162,87 +190,117 @@ void usuario(){
         contCamiones(true, cCamiones);
     }
 
-    //Guardar todo en el espacio de estacionamiento
+    /*Guardar datos en un espacio de estacionamiento*/
 
+    //Encontrar el numero de espacio en el que entrará el cliente
     fstream archivo;
     Espacio aux;
     archivo.open("estacionamiento.dat", ios::binary|ios::in|ios::out);
     if(!archivo){
         cout << "\n\t Lo sentimos ha ocurrido un error en el sistema.";
+        delete v;
+        delete conve;
+        return;
     }
     
+    int espacioLibre = -1;
+    archivo.clear();
+    archivo.seekg(0, ios::beg);
     if(tipoVehiculo == 1){
-        int cont = 0;
-        while(cont <= 599){
-            archivo.seekg((cont)*sizeof(Espacio));
+        for(int i=0; i<600; ++i){
+            archivo.seekg(i*sizeof(Espacio), ios::beg);
             archivo.read(reinterpret_cast<char*>(&aux), sizeof(Espacio));
-            if(!aux.get_ocupado()) break; //Si el cajon de estacionamiento se encuentra vacio se ocupa ese lugar
-            ++cont;
+            if(!aux.get_ocupado()){  //Si el cajon de estacionamiento se encuentra vacio se ocupa ese lugar
+                espacioLibre = i;
+                break;
+            }
         }
     }else if(tipoVehiculo == 2){
-        int cont = 600;
-        while(cont <= 1199){
-            archivo.seekg((cont)*sizeof(Espacio));
+        for(int i=600; i<1200; ++i){
+            archivo.seekg((i)*sizeof(Espacio), ios::beg);
             archivo.read(reinterpret_cast<char*>(&aux), sizeof(Espacio));
-            if(!aux.get_ocupado()) break; //Si el cajon de estacionamiento se encuentra vacio se ocupa ese lugar
-            ++cont;
+            if(!aux.get_ocupado()){  //Si el cajon de estacionamiento se encuentra vacio se ocupa ese lugar
+                espacioLibre = i;
+                break;
+            }
         }
     }else{
-        int cont = 1200;
-        while(cont <= 1499){
-            archivo.seekg((cont)*sizeof(Espacio));
+        for(int i=1200; i<1500; ++i){
+            archivo.seekg((i)*sizeof(Espacio), ios::beg);
             archivo.read(reinterpret_cast<char*>(&aux), sizeof(Espacio));
-            if(!aux.get_ocupado()) break; //Si el cajon de estacionamiento se encuentra vacio se ocupa ese lugar
-            ++cont;
+            if(!aux.get_ocupado()){ //Si el cajon de estacionamiento se encuentra vacio se ocupa ese lugar
+                espacioLibre = i;
+                break; 
+            }
         }
     }
 
-    int numEspacio = aux.get_numEspacio();
+    if(espacioLibre == -1){
+        cout << u8"\n\t Lo sentimos, no hay espacio de estacionamiento disponibles para su tipo de vehículo.";
+        delete v;
+        delete conve;
+        archivo.close();
+        return;
+    }
+
+    int numEspacio = espacioLibre+1; 
     int folio = leer_folios() + 1;
-    Espacio e(numEspacio, folio, v, conve, tarifa, true); //Guarda todos los datos en una variable de espacio para posteriormente registrarla
+    char charTvehiculo[10];
+    strcpy(charTvehiculo, v->getTipo().c_str());
+    Espacio e(numEspacio, folio, charTvehiculo, charPlaca, empresa, descuento, ".", ".", tarifa, true); //Guarda todos los datos en una variable de espacio para posteriormente registrarla
+
+    //Establecer la hora de llegada del usuario
+    e.establecerLlegada();
 
     if(tipoVehiculo == 1){
-        archivo.seekp((numEspacio-1));
+
+        archivo.seekp((numEspacio-1)* sizeof(Espacio), ios::beg);
         archivo.write(reinterpret_cast<char*>(&e), sizeof(Espacio));
     }else if(tipoVehiculo == 2){
-        archivo.seekp((numEspacio-601));
+        archivo.seekp((numEspacio-1)* sizeof(Espacio), ios::beg);
         archivo.write(reinterpret_cast<char*>(&e), sizeof(Espacio));
     }else{
-        archivo.seekp((numEspacio-1201));
+        archivo.seekp((numEspacio-1)* sizeof(Espacio), ios::beg);
         archivo.write(reinterpret_cast<char*>(&e), sizeof(Espacio));
     }
 
     archivo.close();
-
-    ////////////////////////////////////Mostrarle al usuario su ticket de ingreso y especificarle que necesita su folio para salir
-
+    actualizar_folios(folio); //Actualizamos la entrada de folio
     
+    //Construir el ticket de entrada del usuario 
+    TicketEntrada tE(e, conv);
+
+    ///Mostrarle al usuario su ticket de ingreso
+    tE.mostrarTicketEntrada();
+    guardarTicketE(tE);
+    cout << endl;
+    system("pause");
+
+    delete v;
+    delete conve;
 }
 
 
 /*-------------------------- INGRESAR CODIGO DE CONVENIO -------------------*/
 Convenio* codeConvenio(){
     string code;
-    bool digits4 = false;
     int cont = 0;
-    do{
-        do{
-            cout << u8"Ingresa el código de convenio (4 números): ";
-            cin >> code;
-            digits4 = verificar4Digits(code); //Verficación de número con 4 dígitos
-        }while(!digits4);
+    while(cont<3){
+        cout << u8"\n\t Ingresa el código de convenio (4 números): ";
+        cin >> code;
         
-        if(code == MEXABANK){
-            return new MexaBank();
-        }else if(code == SIS){
-            return new Sis();
-        }else if(code == SEGURO){
-            return new Seguro();
-        }else{
-            ++cont;
+        if(!verificar4Digits(code)){ //Verficación de número con 4 dígitos
+            cout << u8"\n\t Código inválido. Deben ser 4 dígitos númericos";
         }
-    }while(cont != 3);
+        if(code == MEXABANK) return new MexaBank();
+        if(code == SIS) return new Sis();
+        if(code == SEGURO) return new Seguro();
+        
+        cout << u8"\n\t Código incorrecto";
+        ++cont;
+    }
 
     cout << u8"\n\t Intentos de registro de código agotados (3 intentos)";
     return nullptr;
 }
+#endif

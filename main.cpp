@@ -1,19 +1,20 @@
+#ifndef MAIN
+#define MAIN
 #include <windows.h>
-#include <algorithm>
-#include "Espacio.h"
-#include "verificar.h"
-#include "ManageArchivos.h"
+#include "Administrador.h"
 #include "usuario.h"
+#include "Facturas.h"
 
 /*CODIGOS DE VERIFICACION EN ORDEN:
-ADMNISTRADOR, APAGAR SISTEMA, CONVENIO MEXABANK, CONVENIO SECRETARIA DE INNOVACIÓN SOCIAL, CONVENIO EMPRESA DE SEGUROS */
+ADMNISTRADOR, APAGAR SISTEMA */
 #define CADMIN "0123"
 #define CAPAGAR "0000"
 
-/* MAXIMA CAPACIDAD DE ALOJO POR VEHICULO */
+/* MAXIMA CAPACIDAD DE 
+ALOJO POR VEHICULO */
  
 #define AUTOS 600  /* Cajones de estacionamiento del 1-500 */
-#define CAMIONETAS 300 /*Cajones de estacionamiento del 501-1000*/
+#define CAMIONES 300 /*Cajones de estacionamiento del 501-1000*/
 #define MOTOS 600  /*Cajones de estacionamiento del 1001-1500*/
 
 //Prototipos
@@ -26,28 +27,33 @@ bool apagar();
 // Menú principal
 
 int main(){
+    cout << "\n\t INICIO";
     SetConsoleOutputCP(CP_UTF8);
-    int opc, cAutos, cCamionetas, cMotos;
-    bool valido = false;
+    int opc;
+    bool valido = false, salirDelSistema = false;
 
     if(!verificarCascaron()){
+        cout << "\n\t INICIO";
         if(CrearArchivos() == 1){
+            cout << "\n\t INICIO";
             cascaronCreado();
         }else{
+            cout << "\n\t INICIO";
             cout << "\n\t Fallo al crear el cascaron.";
-            return 0;
         }
     }
 
-
+    cout << "\n\t INICIO";
     do{
         do{
+            system("cls");
+            cout << "\n\t\t\t --- ESTACIONAMIENTO PLAZA PARKING ---";
             cout << "\n\t [1] Ingresar al estacionamiento";
             cout << "\n\t [2] Salir del estacionamiento";
             cout << "\n\t [3] Administrador";
-            cout << u8"\n\n\t Elige una opción: ";
+            cout << u8"\n\n\t Elija una opción: ";
             cin >> opc;
-        }while(opc != 1 && opc != 2);
+        }while(opc < 1 || opc > 3);
 
         switch(opc){
             case 1: usuario();
@@ -59,7 +65,9 @@ int main(){
             default: cout << u8"\n\tOpción inválida\n";
                 break;
         }
-    }while(valido == false);
+
+        if(valido) salirDelSistema = true;
+    }while(!salirDelSistema);
 
     return 0;
 }
@@ -74,39 +82,31 @@ void salir(){
 
     do{
         cout << "\n---------------------------------------------------\n";
-        cout << u8"\n\t ---> MENÚ <---";
+        cout << u8"\n\t\t ---> MENÚ <---";
         cout << u8"\n\t [1] Ingresar el número de folio del ticket.";
         cout << u8"\n\t [2] Ticket o folio perdido.";
         cout << u8"\n\n\t Elige una opción: ";
+        cin >> opcion;
 
         if(opcion == 2){
             cout << u8"\n\t Por favor, dirijase a la oficina de ayuda del estacionamiento.";
+            system("pause");
             return;
         }
         do{
-            cout << u8"\n\t Ingrese el número de folio del ticket.";
+            cout << u8"\n\t Ingrese el número de folio del ticket: ";
             cin >> folio;
-            if(!verificarFolio()) cout << u8"\n\t Por favor, ingrese un número de folio válido.";
-        }while(!verificarFolio());
-
-        string tVehiculo;
-        if(folio / 100000 == 1){
-            tVehiculo = "autos.dat";
-        }else if(folio / 100000 == 2){
-            tVehiculo = "camionetas.dat";
-        }else{
-            tVehiculo = "motos.dat";
-        }
+            if(!verificarFolio(folio)) cout << u8"\n\t Por favor, ingrese un número de folio válido.";
+        }while(!verificarFolio(folio));
         
-        
-        // Implementar logica para buscar el espacio segun el folio del ticket //
-        archivo.open(tVehiculo, ios::binary|ios::in|ios::out);
+        // Lógica para buscar el espacio según el folio del ticket //
+        archivo.open("estacionamiento.dat", ios::binary|ios::in|ios::out);
         if(!archivo){
             cout << "\n\t Lo sentimos, ha ocurrido un error en el sistema [ESTACIONAMIENTO ESPACIOS].";
+            return;
         }
-        archivo.seekg(ios::beg);
-        while(archivo.eof()){
-            archivo.read(reinterpret_cast<char*>(&e), sizeof(Espacio));
+        archivo.seekg(0, ios::beg);
+        while(archivo.read(reinterpret_cast<char*>(&e), sizeof(Espacio))){
             if(e.get_folio() == folio){
                 siEsta = true;
                 break;
@@ -116,13 +116,44 @@ void salir(){
         if(!siEsta){
             cout << "\n\t Lo sentimos el folio no se ha encontrado, intente ingresarlo nuevamente.";
         }else{
-            //Implementar logica para mostrar ticket de cobro
+            int contVehiculo;
+            //Tomamos el contador del vehiculo
+            if(strcmp(e.get_tipoVehiculo(), "Auto") == 0){
+                contVehiculo = contAutos(false);
+                contVehiculo--;
+                contVehiculo = contAutos(true, contVehiculo);
+            }else if(strcmp(e.get_tipoVehiculo(), "Moto") == 0){
+                contVehiculo = contMotos(false);
+                contVehiculo--;
+                contVehiculo = contMotos(true, contVehiculo);
+            }else{
+                contVehiculo = contCamiones(false);
+                contVehiculo--;
+                contVehiculo = contMotos(true, contVehiculo);
+            }
 
-            blanco = Espacio(e.get_numEspacio(), 0, nullptr, nullptr, "", false);
-            //archivo.seekp()
+            //Construimos el ticket de salida y llenamos los atributos con las funciones establecidas en su misma clase
+            TicketSalida tS(e, ".", ".", 0.0, 0);
+            tS.establecerSalida();
+            tS.calcularDuracion();
+            tS.calcularPago();
+            guardarTicketS(tS);
+            //Mostrandole el ticket al usuario
+            tS.imprimirTicket();
+            cout << u8"\n\n\t Favor de pagar el monto de cobro del estacionamiento.\n\n";
+            system("pause");
+
+            cout << u8"\n\n\t Gracias por visitar Plaza Parking, vuelva pronto!\n\n"; 
+            system("pause");
+            archivo.clear();
+            //Vaciar el espacio del estacionamiento
+            int auxnumEspacio = e.get_numEspacio();
+            blanco = Espacio(e.get_numEspacio(), 0, ".", ".", ".", 0.0, ".", ".", ".", false);
+            archivo.seekp((auxnumEspacio-1) * sizeof(Espacio), ios::beg);
+            archivo.write(reinterpret_cast<char*>(&blanco), sizeof(Espacio));
+
+            archivo.close();
         }
-
-
     }while(!siEsta);
 
 }
@@ -130,6 +161,7 @@ void salir(){
 /* ======================== ADMINISTRACIÓN DEL SISTEMA ======================= */
 
 void administrador(bool &valido){
+    Administrador admin;
     string codigo;
     int cont = 0;
     bool correcta = false, digits4 = false;
@@ -153,7 +185,7 @@ void administrador(bool &valido){
         
     }while(correcta == false && cont < 3);
 
-    cout << "\n\t Bienvenido Administrador";
+    cout << "\n\t\t\t --> Bienvenido Administrador <-- ";
 
     /* ------------> OPCIONES PARA LA ADMNISTRACION DEL SISTEMA <----------------- */
     int opc;
@@ -166,7 +198,7 @@ void administrador(bool &valido){
         cin >> opc;
 
         switch(opc){
-            case 1: cout << "Administrar"; ///////////////Agregar opciones de administracion (Implementación en archivo.h)
+            case 1: admin.panelAdministracion();
                 break;
             case 2:{
                 char resp;
@@ -209,3 +241,4 @@ bool apagar(){
 
     return false;
 }
+#endif
