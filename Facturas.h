@@ -318,6 +318,7 @@ Facturas_CorteCaja consultarTicket(string carpeta, string nombre){
             string nomArchivo = ruta.stem().string();
             if(nomArchivo == nombre){
                 rutaArchivo = ruta;
+                cout << "\n\t Ruta: " << rutaArchivo;
                 encontrado = true;
                 break;
             }

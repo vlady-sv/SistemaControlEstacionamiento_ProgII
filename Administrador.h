@@ -73,31 +73,31 @@ void Administrador::panelAdministracion() {
                 cin.ignore();
                 getline(cin, nombre);
                 facturas = consultarTicket("Cortes_Caja", nombre);
-                cout << "\n\t Ingresos: " << facturas.get_totalGanancias();
+                cout << "\n\t Ingresos: $" << facturas.get_totalGanancias();
                 cout << "\n\t Tickets contados: " << facturas.get_cantTickets();
                 break;
             case 8:
                 cout << "\n\t Ingresa el nombre del archivo que deseas buscar: ";
                 cin.ignore();
                 getline(cin, nombre);
-                consultarTicket("Facturas_Semanales", nombre);
-                cout << "\n\t Ingresos: " << facturas.get_totalGanancias();
+                facturas = consultarTicket("Facturas_Semanales", nombre);
+                cout << "\n\t Ingresos: $" << facturas.get_totalGanancias();
                 cout << "\n\t Tickets contados: " << facturas.get_cantTickets();
                 break;
             case 9:
                 cout << "\n\t Ingresa el nombre del archivo que deseas buscar: ";
                 cin.ignore();
                 getline(cin, nombre);
-                consultarTicket("Facturas_Mensuales", nombre);
-                cout << "\n\t Ingresos: " << facturas.get_totalGanancias();
+                facturas = consultarTicket("Facturas_Mensuales", nombre);
+                cout << "\n\t Ingresos: $" << facturas.get_totalGanancias();
                 cout << "\n\t Tickets contados: " << facturas.get_cantTickets();
                 break;
             case 10:
                 cout << "\n\t Ingresa el nombre del archivo que deseas buscar: ";
                 cin.ignore();
                 getline(cin, nombre);
-                consultarTicket("Facturas_Generales", nombre);
-                cout << "\n\t Ingresos: " << facturas.get_totalGanancias();
+                facturas = consultarTicket("Facturas_Generales", nombre);
+                cout << "\n\t Ingresos: $" << facturas.get_totalGanancias();
                 cout << "\n\t Tickets contados: " << facturas.get_cantTickets();
                 break;
             case 0: cout << u8"\n\t Regresando al menú anterior...";

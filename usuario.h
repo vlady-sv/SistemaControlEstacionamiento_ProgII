@@ -29,7 +29,7 @@ void usuario(){
         cout << "\n\t\t\t ---> Registro para Ingresar <--\n";
         cout << "\n\t [1] Automóvil";
         cout << "\n\t [2] Moto";
-        cout << u8"\n\t [3] Camión";
+        cout << u8"\n\t [3] Pick-Up/Camión";
         cout << u8"\n\t [0] Volver al menú principal";
         cout << u8"\n\n\t Tipo de vehículo: ";
         cin >> tipoVehiculo;

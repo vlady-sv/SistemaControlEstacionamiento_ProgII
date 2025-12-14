@@ -56,9 +56,9 @@ int diasCobrar(string llegada, string salida){
     int dias = totalSegs / (24*3600); //Obtención de los días completos
     int restoSegs = totalSegs % (24*3600); //Obtención del tiempo restante (en segundos)
 
-    if(dias < 1) dias++;
-    if(!(dias < 1)){
-        if(restoSegs > 30 * 60) dias++; /*Tolerancia de 30 minutos, si en el último día que estuvo el cliente 
+    if(dias == 0) dias++;
+    if(dias > 1){
+        if(restoSegs > (30 * 60)) dias++; /*Tolerancia de 30 minutos, si en el último día que estuvo el cliente 
         estuvo por más de 30 minutos se cobra el día completo, esto solo aplica del segundo día en adelante*/
     }
     return dias;
