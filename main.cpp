@@ -107,7 +107,7 @@ void salir(){
         }
         archivo.seekg(0, ios::beg);
         while(archivo.read(reinterpret_cast<char*>(&e), sizeof(Espacio))){
-            if(e.get_folio() == folio){
+            if(e.get_folio() == folio && e.get_ocupado()){
                 siEsta = true;
                 break;
             }
@@ -129,7 +129,7 @@ void salir(){
             }else{
                 contVehiculo = contCamiones(false);
                 contVehiculo--;
-                contVehiculo = contMotos(true, contVehiculo);
+                contVehiculo = contCamiones(true, contVehiculo);
             }
 
             //Construimos el ticket de salida y llenamos los atributos con las funciones establecidas en su misma clase
