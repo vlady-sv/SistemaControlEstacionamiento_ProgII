@@ -161,6 +161,9 @@ class TicketSalida{
                 cout << "-------------------------------------" << endl;
                 return;
             }
+            //llamamos a funciones de calcular pago/duración
+            calcularDuracion();
+            calcularPago();
 
             cout << "\n\t\t\t ***** PLAZA PARKING *****\n";
             cout << "\n\t\t\t---- Ticket de Salida ----" << endl; 
@@ -168,6 +171,12 @@ class TicketSalida{
             cout << "\n\t Hora de salida: " << horaSalida;
             cout << u8"\n\t Día de salida: " << diaSalida;
             cout << u8"\n\t Duración: " << duracion;
+            //si aplica descuento
+            if(e.get_desuento() != 0){
+                cout << u8"\n\t Descuento aplicado: " << e.get_descuento() * 100 << "%";
+            }else{
+                cout << u8"\n\t Descuento aplicado: No";
+            }    
             cout << "\n\tTotal a pagar: $" << totalPagar << endl;
             cout << "-------------------------------------" << endl;
         }
