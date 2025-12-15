@@ -182,6 +182,7 @@ void administrador(bool &valido){
         }
         if(codigo != CADMIN && cont == 3){
             cout << u8"\n\t Intentos de inicio de sesión agotados.\n\n";
+            system("pause");
             return;
         }
         
@@ -221,7 +222,7 @@ void administrador(bool &valido){
 
 bool apagar(){
     string code;
-    int cont;
+    int cont = 0;
     bool digits4;
     do{
         do{
@@ -238,7 +239,9 @@ bool apagar(){
         }
 
         if(code != CAPAGAR && cont == 3){
-            cout << "\n\t Intentos agotados";
+            cout << "\n\t Intentos agotados\n\n";
+            system("pause");
+            system("cls");
         }
     }while(cont < 3);
 
